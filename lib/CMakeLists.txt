@@ -15,7 +15,8 @@ target_compile_definitions(basedvt PRIVATE
 
 set(basedvt_SOURCES
 	BasedVT.cpp
-	FSM.cpp
+	FSMActions.cpp
+	FSMCallbacks.cpp
 )
 list(TRANSFORM basedvt_SOURCES PREPEND src/)
 

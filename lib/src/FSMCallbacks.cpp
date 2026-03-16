@@ -33,7 +33,7 @@ ECResult ev_esc_cb (FSM* fsm, Context* ctx) {
 	return state;
 }
 
-Events process_input_byte (char b) {
+Events byte_to_event (char b, FSMDetail::States currState) {
 	Events ev = Events::EV_PRINTABLE;
 	switch (b) {
 		case '0'...'9': ev = Events::EV_DIGIT; break;

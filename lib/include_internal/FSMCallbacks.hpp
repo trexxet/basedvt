@@ -11,7 +11,7 @@ EventCallback ev_digit_cb;
 EventCallback ev_semicolon_cb;
 EventCallback ev_esc_cb;
 
-FSMDetail::Events process_input_byte (char b);
+FSMDetail::Events byte_to_event (char b, FSMDetail::States currState);
 
 consteval auto make_callbacks() {
 	using namespace FSMDetail;
