@@ -1,25 +1,41 @@
 #pragma once
 
 #include "BasedVT/FSMDetail.hpp"
+#include "FSMActions.hpp"
+
+#include <optional>
 
 namespace BasedVT {
 
 using EventCallback = FSMDetail::FSM::EventCallback;
 
-EventCallback ev_printable_cb;
-EventCallback ev_digit_cb;
-EventCallback ev_semicolon_cb;
 EventCallback ev_esc_cb;
+EventCallback ev_execute_cb;
+EventCallback ev_printable_cb;
+EventCallback ev_intermediate_cb;
+EventCallback ev_digit_cb;
+EventCallback ev_colon_cb;
+EventCallback ev_semicolon_cb;
+EventCallback ev_private_cb;
+EventCallback ev_final_cb;
+EventCallback ev_delete_cb;
 
-FSMDetail::Events byte_to_event (char b, FSMDetail::States currState);
+std::optional <FSMDetail::Events> byte_to_event (char b, FSMDetail::States currState);
 
-consteval auto make_callbacks() {
+consteval auto make_callbacks () {
 	using namespace FSMDetail;
 	return FSM::make_callbacks (
+		FSM::event_cb <Events::EV_ESC> ({ev_esc_cb}),
+		FSM::event_cb <Events::EV_ESC> ({ev_execute_cb}),
 		FSM::event_cb <Events::EV_PRINTABLE> ({ev_printable_cb}),
+		FSM::event_cb <Events::EV_INTERMEDIATE> ({ev_intermediate_cb}),
 		FSM::event_cb <Events::EV_DIGIT> ({ev_digit_cb}),
+		FSM::event_cb <Events::EV_COLON> ({ev_colon_cb}),
 		FSM::event_cb <Events::EV_SEMICOLON> ({ev_semicolon_cb}),
-		FSM::event_cb <Events::EV_ESC> ({ev_esc_cb})
+		FSM::event_cb <Events::EV_PRIVATE> ({ev_private_cb}),
+		FSM::event_cb <Events::EV_FINAL> ({ev_final_cb}),
+		FSM::event_cb <Events::EV_DELETE> ({ev_delete_cb}),
+		FSM::state_cb <States::ST_ESC> ({.on_enter = [] (Context* ctx) { action (Actions::AC_CLEAR, ctx); }})
 	);
 }
 

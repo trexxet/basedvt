@@ -4,11 +4,13 @@
 
 #include "Basedlib/PrettyEnum.hpp"
 
+#ifdef BASEDVT_DEBUG
+#include <print>
+#endif
+
 namespace BasedVT {
 
 using Action = void (*) (FSMDetail::Context*);
-
-namespace Actions {
 
 void print (FSMDetail::Context*) {
 
@@ -38,22 +40,23 @@ void csi_dispatch (FSMDetail::Context*) {
 
 }
 
-}
-
 using PrettyActions = Basedlib::PrettyEnum<FSMDetail::Actions>;
 
 constexpr std::array <Action, PrettyActions::size> actions = {
 	nullptr,
-	Actions::print,
-	Actions::execute,
-	Actions::clear,
-	Actions::collect,
-	Actions::param,
-	Actions::esc_dispatch,
-	Actions::csi_dispatch
+	print,
+	execute,
+	clear,
+	collect,
+	param,
+	esc_dispatch,
+	csi_dispatch
 };
 
 void action (FSMDetail::Actions ac, FSMDetail::Context* ctx) {
+#ifdef BASEDVT_DEBUG
+	std::print ("Action: {}\n", PrettyActions::to_string(ac));
+#endif
 	actions[PrettyActions::idx(ac)] (ctx);
 }
 

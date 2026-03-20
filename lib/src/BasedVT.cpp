@@ -2,12 +2,16 @@
 
 #include "FSMCallbacks.hpp"
 
+#include <optional>
+
 namespace BasedVT {
 
 using namespace FSMDetail;
 
 void Parser::feed (char c) {
-	fsm.event (byte_to_event (c, fsm.state()));
+	std::optional <Events> ev = byte_to_event (c, fsm.state());
+	if (ev)
+		fsm.event (ev.value());
 }
 
 Parser::Parser () : fsm (States::ST_GROUND, &ctx, make_callbacks ()) {
