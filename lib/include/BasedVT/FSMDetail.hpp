@@ -35,6 +35,7 @@ enum class Events {
 	EV_SEMICOLON,    // 0x3B
 	EV_PRIVATE,      // 0x3C-0x3F
 	EV_FINAL,        // 0x40-0x7E
+	EV_CSI_ENTRY,    // 0x5B in ST_ESC
 	EV_DELETE        // 0x7F
 };
 
