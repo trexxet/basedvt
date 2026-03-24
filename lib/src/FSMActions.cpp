@@ -6,41 +6,71 @@
 
 #ifdef BASEDVT_DEBUG
 #include <print>
+#include <string>
 #endif
 
 namespace BasedVT {
 
-using Action = void (*) (FSMDetail::Context*);
+using namespace FSMDetail;
+using Action = void (*) (Context*);
 
-void print (FSMDetail::Context*) {
+inline static void ready (Context* ctx, Token::Type type) {
+	ctx->token.type = type;
+	ctx->token.ch = ctx->currByte;
+	ctx->ready = true;
 
+#ifdef BASEDVT_DEBUG
+	std::print ("Token: {}\n", ctx->token.to_string());
+#endif
 }
 
-void execute (FSMDetail::Context*) {
-
+void print (Context* ctx) {
+	ready (ctx, Token::Type::PRINT);
 }
 
-void clear (FSMDetail::Context*) {
-
+void execute (Context* ctx) {
+	ready (ctx, Token::Type::EXEC);
 }
 
-void collect (FSMDetail::Context*) {
-
+void clear (Context* ctx) {
+	*ctx = {};
 }
 
-void param (FSMDetail::Context*) {
+void collect (Context* ctx) {
+	const uint8_t b = ctx->currByte;
 
+	if (b >= '>' && b <= '?') {
+		ctx->token.privateMark = b;
+		return;
+	}
+
+	ctx->token.add_intermediate (static_cast<char> (b));
 }
 
-void esc_dispatch (FSMDetail::Context*) {
+void param (Context* ctx) {
+	const uint8_t b = ctx->currByte;
 
+	if (b == ';') {
+		ctx->token.add_param (&ctx->currParam);
+		return;
+	}
+
+	if (ctx->currParam < 0) ctx->currParam = 0;
+	ctx->currParam = ctx->currParam * 10 + (b - '0');
 }
 
-void csi_dispatch (FSMDetail::Context*) {
-
+void esc_dispatch (Context* ctx) {
+	ready (ctx, Token::Type::ESC);
 }
 
-using PrettyActions = Basedlib::PrettyEnum<FSMDetail::Actions>;
+void csi_dispatch (Context* ctx) {
+	if (ctx->currParam >= 0)
+		ctx->token.add_param (&ctx->currParam);
+
+	ready (ctx, Token::Type::CSI);
+}
+
+using PrettyActions = Basedlib::PrettyEnum<Actions>;
 
 constexpr std::array <Action, PrettyActions::size> actions = {
 	nullptr,
@@ -53,7 +83,7 @@ constexpr std::array <Action, PrettyActions::size> actions = {
 	csi_dispatch
 };
 
-void action (FSMDetail::Actions ac, FSMDetail::Context* ctx) {
+void action (Actions ac, Context* ctx) {
 #ifdef BASEDVT_DEBUG
 	std::print ("Action: {}\n", PrettyActions::to_string(ac));
 #endif

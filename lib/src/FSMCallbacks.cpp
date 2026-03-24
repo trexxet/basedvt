@@ -165,7 +165,7 @@ ECResult ev_delete_cb (FSM* fsm, Context* ctx) {
 	return state;
 }
 
-std::optional <Events> byte_to_event (char b, FSMDetail::States currState) {
+std::optional <Events> byte_to_event (uint8_t b, FSMDetail::States currState) {
 	switch (b) {
 		case 0x00 ... 0x1A:
 		case 0x1C ... 0x1F: return Events::EV_EXECUTE;

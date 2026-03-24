@@ -2,6 +2,7 @@
 #include "BasedVT/BasedVT.hpp"
 
 #include <cstdio>
+#include <cstdint>
 #include <print>
 
 #include <windows.h>
@@ -33,7 +34,7 @@ int main () {
 	if (!conf_term (ct)) return 0;
 	std::print ("VT Test\n");
 
-	char buf[64];
+	uint8_t buf[64];
 	ssize_t n = read (STDIN_FILENO, buf, sizeof(buf));
 	std::print ("Read: {}\n", n);
 
@@ -46,6 +47,7 @@ int main () {
 
 	for (ssize_t i = 0; i < n; i++) {
 		vtParser.feed (buf[i]);
+		auto token = vtParser.get();
 	}
 
 	unconf_term (ct);
