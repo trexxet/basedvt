@@ -1,10 +1,9 @@
 #pragma once
 
-#include "Basedlib/FSM.hpp"
-
-#include <array>
 #include <cstdint>
-#include <string>
+
+#include "Basedlib/FSM.hpp"
+#include "Token.hpp"
 
 #ifdef BASEDVT_DEBUG
 #include <print>
@@ -12,57 +11,6 @@
 #endif
 
 namespace BasedVT::FSMDetail {
-
-struct Token {
-	enum class Type {
-		NONE,
-		PRINT,
-		EXEC,
-		ESC,
-		CSI
-	} type = Type::NONE;
-
-	uint8_t ch = 0;
-	uint8_t privateMark = 0;
-	std::array<int, 16> params = {};
-	uint8_t paramsCount = 0;
-	std::array<char, 4> intermediates = {};
-	uint8_t intermediatesCount = 0;
-
-	void add_param (int* param) noexcept {
-		if (paramsCount < params.size())
-			params[paramsCount++] = (*param < 0) ? 0 : *param;
-		*param = -1;
-	}
-
-	void add_intermediate (char intermediate) {
-		if (intermediatesCount < intermediates.size())
-			intermediates[intermediatesCount++] = intermediate;
-	}
-
-#ifdef BASEDVT_DEBUG
-	const std::string to_string() const noexcept {
-		return std::format ("Type: {} ch: {} params: {} inter: {}",
-			Basedlib::PrettyEnum<Type>::to_string (type),
-			(int) ch,
-			[this] () -> std::string {
-				if (paramsCount == 0) return "none";
-				std::string str = {};
-				for (uint8_t i = 0; i < paramsCount; i++)
-					str.append (std::format("{} ", params[i]));
-				return str;
-			} (),
-			[this] () -> std::string {
-				if (intermediatesCount == 0) return "none";
-				std::string str = {};
-				for (uint8_t i = 0; i < intermediatesCount; i++)
-					str.append (std::format("{} ", intermediates[i]));
-				return str;
-			} ()
-		);
-	}
-#endif
-};
 
 struct Context {
 	uint8_t currByte = 0;

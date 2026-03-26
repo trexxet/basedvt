@@ -3,6 +3,7 @@
 #include <array>
 
 #include "Basedlib/PrettyEnum.hpp"
+#include "BasedVT/Token.hpp"
 
 #ifdef BASEDVT_DEBUG
 #include <print>

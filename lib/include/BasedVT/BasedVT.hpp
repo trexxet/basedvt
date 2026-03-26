@@ -4,6 +4,7 @@
 #include <optional>
 
 #include "FSMDetail.hpp"
+#include "Token.hpp"
 
 namespace BasedVT {
 
@@ -15,7 +16,7 @@ class Parser {
 public:
 	void feed (uint8_t c);
 
-	std::optional <FSMDetail::Token> get () const noexcept {
+	std::optional <Token> get () const noexcept {
 		if (ctx.ready) return ctx.token;
 		else return std::nullopt;
 	}
