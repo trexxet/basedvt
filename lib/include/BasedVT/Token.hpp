@@ -62,5 +62,4 @@ struct Token {
 #endif
 };
 
-
 }

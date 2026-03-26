@@ -4,6 +4,7 @@
 #include <optional>
 
 #include "FSMDetail.hpp"
+#include "Key.hpp"
 #include "Token.hpp"
 
 namespace BasedVT {
