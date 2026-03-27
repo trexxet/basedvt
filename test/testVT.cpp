@@ -48,6 +48,8 @@ int main () {
 	for (ssize_t i = 0; i < n; i++) {
 		vtParser.feed (buf[i]);
 		auto token = vtParser.get();
+		if (token)
+			auto key = vtParser.get_decode (token.value());
 	}
 
 	unconf_term (ct);

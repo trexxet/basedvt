@@ -7,13 +7,11 @@
 
 #ifdef BASEDVT_DEBUG
 #include <print>
-#include <string>
 #endif
 
 namespace BasedVT {
 
 using namespace FSMDetail;
-using Action = void (*) (Context*);
 
 inline static void ready (Context* ctx, Token::Type type) {
 	ctx->token.type = type;
@@ -71,10 +69,9 @@ void csi_dispatch (Context* ctx) {
 	ready (ctx, Token::Type::CSI);
 }
 
-using PrettyActions = Basedlib::PrettyEnum<Actions>;
+using PrettyActions = Basedlib::PrettyEnum <Actions>;
 
-constexpr std::array <Action, PrettyActions::size> actions = {
-	nullptr,
+constexpr std::array actions = {
 	print,
 	execute,
 	clear,

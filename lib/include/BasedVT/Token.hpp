@@ -3,22 +3,23 @@
 #include <array>
 #include <cstdint>
 
+#include "Basedlib/PrettyEnum.hpp"
+
 #ifdef BASEDVT_DEBUG
 #include <format>
 #include <string>
-#include "Basedlib/PrettyEnum.hpp"
 #endif
 
 namespace BasedVT {
 
 struct Token {
 	enum class Type {
-		NONE,
 		PRINT,
 		EXEC,
 		ESC,
 		CSI
-	} type = Type::NONE;
+	} type;
+	using PrettyType = Basedlib::PrettyEnum <Type>;
 
 	uint8_t ch = 0;
 	uint8_t privateMark = 0;
@@ -41,7 +42,7 @@ struct Token {
 #ifdef BASEDVT_DEBUG
 	const std::string to_string() const noexcept {
 		return std::format ("Type: {} ch: {} params: {} inter: {}",
-			Basedlib::PrettyEnum<Type>::to_string (type),
+			PrettyType::to_string (type),
 			(int) ch,
 			[this] () -> std::string {
 				if (paramsCount == 0) return "none";

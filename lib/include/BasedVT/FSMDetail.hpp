@@ -50,7 +50,6 @@ using FSM = Basedlib::FSM::FSM <Basedlib::FSM::Enum<States>, Basedlib::FSM::Enum
 >;
 
 enum class Actions {
-	AC_IGNORE,
 	AC_PRINT,
 	AC_EXECUTE,
 	AC_CLEAR,

@@ -1,5 +1,6 @@
 #include "BasedVT/BasedVT.hpp"
 
+#include "Decode.hpp"
 #include "FSMCallbacks.hpp"
 
 #include <optional>
@@ -14,6 +15,10 @@ void Parser::feed (uint8_t c) {
 		ctx.currByte = c;
 		fsm.event (ev.value());
 	}
+}
+
+std::optional<KeyInput> Parser::get_decode (const Token& t) const noexcept {
+	return decode (t);
 }
 
 Parser::Parser () : fsm (States::ST_GROUND, &ctx, make_callbacks ()) {

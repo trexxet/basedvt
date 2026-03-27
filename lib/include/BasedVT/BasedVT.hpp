@@ -17,10 +17,12 @@ class Parser {
 public:
 	void feed (uint8_t c);
 
-	std::optional <Token> get () const noexcept {
+	std::optional<Token> get () const noexcept {
 		if (ctx.ready) return ctx.token;
 		else return std::nullopt;
 	}
+
+	std::optional<KeyInput> get_decode (const Token& t) const noexcept;
 
 	Parser ();
 };
