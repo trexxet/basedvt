@@ -50,7 +50,7 @@ ECResult ev_intermediate_cb (FSM* fsm, Context* ctx) {
 	return state;
 }
 
-ECResult ev_digit_cb (FSM* fsm, Context* ctx) {
+ECResult ev_param_cb (FSM* fsm, Context* ctx) {
 	States state = fsm->state();
 	switch (state) {
 		case States::ST_ESC:
@@ -82,29 +82,6 @@ ECResult ev_colon_cb (FSM* fsm, Context* ctx) {
 			break;
 		case States::ST_CSI_ENTRY:
 		case States::ST_CSI_PARAM:
-		case States::ST_CSI_INTER:
-		case States::ST_CSI_IGNORE:
-			state = States::ST_CSI_IGNORE;
-			break;
-	}
-	fsm->switch_state (state);
-	return state;
-}
-
-// TODO: same as digit?
-ECResult ev_semicolon_cb (FSM* fsm, Context* ctx) {
-	States state = fsm->state();
-	switch (state) {
-		case States::ST_ESC:
-		case States::ST_ESC_INTER:
-			action (Actions::AC_ESC_DISPATCH, ctx);
-			state = States::ST_GROUND;
-			break;
-		case States::ST_CSI_ENTRY:
-		case States::ST_CSI_PARAM:
-			action (Actions::AC_PARAM, ctx);
-			state = States::ST_CSI_PARAM;
-			break;
 		case States::ST_CSI_INTER:
 		case States::ST_CSI_IGNORE:
 			state = States::ST_CSI_IGNORE;
@@ -202,9 +179,9 @@ std::optional <Events> byte_to_event (uint8_t b, FSMDetail::States currState) {
 
 	switch (b) {
 		case 0x20 ... 0x2F: return Events::EV_INTERMEDIATE;
-		case 0x30 ... 0x39: return Events::EV_DIGIT;
+		case 0x30 ... 0x39:
+		case 0x3B: return Events::EV_PARAM;
 		case 0x3A: return Events::EV_COLON;
-		case 0x3B: return Events::EV_SEMICOLON;
 		case 0x3C ... 0x3F: return Events::EV_PRIVATE;
 		case 0x40 ... 0x7E: return Events::EV_FINAL;
 	};

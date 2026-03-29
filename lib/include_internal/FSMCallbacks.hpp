@@ -13,7 +13,7 @@ EventCallback ev_esc_cb;
 EventCallback ev_execute_cb;
 EventCallback ev_printable_cb;
 EventCallback ev_intermediate_cb;
-EventCallback ev_digit_cb;
+EventCallback ev_param_cb;
 EventCallback ev_colon_cb;
 EventCallback ev_semicolon_cb;
 EventCallback ev_private_cb;
@@ -31,9 +31,8 @@ consteval auto make_callbacks () {
 		FSM::event_cb <Events::EV_EXECUTE>      (ev_execute_cb),
 		FSM::event_cb <Events::EV_PRINTABLE>    (ev_printable_cb),
 		FSM::event_cb <Events::EV_INTERMEDIATE> (ev_intermediate_cb),
-		FSM::event_cb <Events::EV_DIGIT>        (ev_digit_cb),
+		FSM::event_cb <Events::EV_PARAM>        (ev_param_cb),
 		FSM::event_cb <Events::EV_COLON>        (ev_colon_cb),
-		FSM::event_cb <Events::EV_SEMICOLON>    (ev_semicolon_cb),
 		FSM::event_cb <Events::EV_PRIVATE>      (ev_private_cb),
 		FSM::event_cb <Events::EV_FINAL>        (ev_final_cb),
 		FSM::event_cb <Events::EV_CSI_ENTRY>    (ev_csi_entry_cb),
