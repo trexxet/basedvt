@@ -69,6 +69,10 @@ void csi_dispatch (Context* ctx) {
 	ready (ctx, Token::Type::CSI);
 }
 
+void ss3_dispatch (Context *ctx) {
+	ready (ctx, Token::Type::SS3);
+}
+
 using PrettyActions = Basedlib::PrettyEnum <Actions>;
 
 constexpr std::array actions = {
@@ -78,7 +82,8 @@ constexpr std::array actions = {
 	collect,
 	param,
 	esc_dispatch,
-	csi_dispatch
+	csi_dispatch,
+	ss3_dispatch
 };
 
 void action (Actions ac, Context* ctx) {

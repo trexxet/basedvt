@@ -90,11 +90,22 @@ std::optional<KeyInput> decode_csi (const Token& t) {
 	return std::nullopt;
 }
 
+std::optional<KeyInput> decode_ss3 (const Token& t) {
+	switch (t.ch) {
+		case 'P': return KeyInput { .key = KeyInput::Key::F1 };
+		case 'Q': return KeyInput { .key = KeyInput::Key::F2 };
+		case 'R': return KeyInput { .key = KeyInput::Key::F3 };
+		case 'S': return KeyInput { .key = KeyInput::Key::F4 };
+	}
+	return std::nullopt;
+}
+
 constexpr std::array decoder = {
 	decode_print,
 	decode_exec,
 	decode_esc,
-	decode_csi
+	decode_csi,
+	decode_ss3
 };
 
 std::optional<KeyInput> decode (const Token& t) {

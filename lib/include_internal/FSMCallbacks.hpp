@@ -19,6 +19,7 @@ EventCallback ev_semicolon_cb;
 EventCallback ev_private_cb;
 EventCallback ev_final_cb;
 EventCallback ev_csi_entry_cb;
+EventCallback ev_ss3_entry_cb;
 EventCallback ev_delete_cb;
 
 std::optional <FSMDetail::Events> byte_to_event (uint8_t b, FSMDetail::States currState);
@@ -37,6 +38,7 @@ consteval auto make_callbacks () {
 		FSM::event_cb <Events::EV_PRIVATE>      (ev_private_cb),
 		FSM::event_cb <Events::EV_FINAL>        (ev_final_cb),
 		FSM::event_cb <Events::EV_CSI_ENTRY>    (ev_csi_entry_cb),
+		FSM::event_cb <Events::EV_SS3_ENTRY>    (ev_ss3_entry_cb),
 		FSM::event_cb <Events::EV_DELETE>       (ev_delete_cb),
 		FSM::state_cb <States::ST_ESC>          ({.on_enter = do_clear}),
 		FSM::state_cb <States::ST_CSI_ENTRY>    ({.on_enter = do_clear})

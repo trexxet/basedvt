@@ -17,8 +17,18 @@ ECResult ev_execute_cb (FSM* fsm, Context* ctx) {
 }
 
 ECResult ev_printable_cb (FSM* fsm, Context* ctx) {
-	action (Actions::AC_PRINT, ctx);
-	return fsm->state();
+	States state = fsm->state();
+	switch (state) {
+		case States::ST_GROUND:
+			action (Actions::AC_PRINT, ctx);
+			break;
+		case States::ST_SS3:
+			action (Actions::AC_SS3_DISPATCH, ctx);
+			state = States::ST_GROUND;
+			break;
+	}
+	fsm->switch_state (state);
+	return state;
 }
 
 ECResult ev_intermediate_cb (FSM* fsm, Context* ctx) {
@@ -132,7 +142,17 @@ ECResult ev_csi_entry_cb (FSM* fsm, Context* ctx) {
 		case States::ST_ESC:
 			state = States::ST_CSI_ENTRY;
 			break;
-		default: break;
+	}
+	fsm->switch_state (state);
+	return state;
+}
+
+ECResult ev_ss3_entry_cb (FSM* fsm, Context* ctx) {
+	States state = fsm->state();
+	switch (state) {
+		case States::ST_ESC:
+			state = States::ST_SS3;
+			break;
 	}
 	fsm->switch_state (state);
 	return state;
@@ -173,15 +193,15 @@ std::optional <Events> byte_to_event (uint8_t b, FSMDetail::States currState) {
 		case 0x7F: return Events::EV_DELETE;
 	};
 
-	if (currState == States::ST_GROUND) [[likely]] {
+	if (currState == States::ST_GROUND || currState == States::ST_SS3) [[likely]] {
 		if (b >= 0x20 && b <= 0x7E) [[likely]]
 			return Events::EV_PRINTABLE;
 		return std::nullopt;
 	}
 
 	if (currState == States::ST_ESC) {
-		if (b == 0x5B)
-			return Events::EV_CSI_ENTRY;
+		if (b == 0x5B) return Events::EV_CSI_ENTRY;
+		if (b == 0x4F) return Events::EV_SS3_ENTRY;
 	}
 
 	switch (b) {

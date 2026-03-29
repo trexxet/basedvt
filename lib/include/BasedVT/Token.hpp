@@ -17,7 +17,8 @@ struct Token {
 		PRINT,
 		EXEC,
 		ESC,
-		CSI
+		CSI,
+		SS3
 	} type;
 	using PrettyType = Basedlib::PrettyEnum <Type>;
 
