@@ -32,7 +32,7 @@ enum class States {
 
 enum class Events {
 	EV_ESC,          // 0x1B
-	EV_EXECUTE,      // 0x00-0x17, 0x19, 0x1C-0x1F
+	EV_EXECUTE,      // 0x00-0x17, 0x19, 0x1C-0x1F; 0x7F in ST_GROUND
 	EV_PRINTABLE,    // 0x20-0x7F in ST_GROUND or ST_SS3
 	EV_INTERMEDIATE, // 0x20-0x2F
 	EV_DIGIT,        // 0x30-0x39
@@ -41,8 +41,7 @@ enum class Events {
 	EV_PRIVATE,      // 0x3C-0x3F
 	EV_FINAL,        // 0x40-0x7E
 	EV_CSI_ENTRY,    // 0x5B '[' in ST_ESC
-	EV_SS3_ENTRY,    // 0x4F 'O' in ST_ESC
-	EV_DELETE        // 0x7F
+	EV_SS3_ENTRY     // 0x4F 'O' in ST_ESC
 };
 
 using FSM = Basedlib::FSM::FSM <Basedlib::FSM::Enum<States>, Basedlib::FSM::Enum<Events>, Context

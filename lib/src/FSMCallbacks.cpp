@@ -178,20 +178,16 @@ ECResult ev_final_cb (FSM* fsm, Context* ctx) {
 	return state;
 }
 
-ECResult ev_delete_cb (FSM* fsm, Context* ctx) {
-	States state = fsm->state();
-	if (state == States::ST_GROUND)
-		action (Actions::AC_PRINT, ctx);
-	return state;
-}
-
 std::optional <Events> byte_to_event (uint8_t b, FSMDetail::States currState) {
 	switch (b) {
 		case 0x00 ... 0x1A:
 		case 0x1C ... 0x1F: return Events::EV_EXECUTE;
 		case 0x1B: return Events::EV_ESC;
-		case 0x7F: return Events::EV_DELETE;
 	};
+
+	if (currState == States::ST_GROUND) {
+		if (b == 0x7F) return Events::EV_EXECUTE;
+	}
 
 	if (currState == States::ST_GROUND || currState == States::ST_SS3) [[likely]] {
 		if (b >= 0x20 && b <= 0x7E) [[likely]]

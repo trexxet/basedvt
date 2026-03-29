@@ -18,6 +18,7 @@ bool conf_term (ConfTerm& ct) {
 	ct.hIn = GetStdHandle (STD_INPUT_HANDLE);
 	GetConsoleMode (ct.hIn, &ct.modeSave);
 	DWORD mode = ct.modeSave | ENABLE_VIRTUAL_TERMINAL_INPUT;
+	mode &= ~(ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT | ENABLE_PROCESSED_INPUT);
 	if (!SetConsoleMode (ct.hIn, mode)) {
 		std::print ("SetConsoleMode failed\n");
 		return false;

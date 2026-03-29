@@ -50,6 +50,7 @@ std::optional<KeyInput> decode_exec (const Token& t) {
 		case 0x09: return KeyInput { .key = KeyInput::Key::TAB };
 		case 0x0A: return KeyInput { .key = KeyInput::Key::ENTER };
 		case 0x1B: return KeyInput { .key = KeyInput::Key::ESCAPE };
+		case 0x7F: return KeyInput { .key = KeyInput::Key::BACKSPACE };
 		default:
 			if (t.ch >= 0x01 && t.ch <= 0x1A)
 				return KeyInput {
