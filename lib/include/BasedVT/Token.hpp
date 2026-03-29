@@ -41,7 +41,7 @@ struct Token {
 
 #ifdef BASEDVT_DEBUG
 	const std::string to_string() const noexcept {
-		return std::format ("Type: {} ch: {} params: {} inter: {}",
+		return std::format ("Type: {} ch: {} params: {} inter: {} private: {}",
 			PrettyType::to_string (type),
 			(int) ch,
 			[this] () -> std::string {
@@ -57,7 +57,8 @@ struct Token {
 				for (uint8_t i = 0; i < intermediatesCount; i++)
 					str.append (std::format("{} ", intermediates[i]));
 				return str;
-			} ()
+			} (),
+			privateMark > 0 ? std::format ("{}", privateMark) : "none"
 		);
 	}
 #endif
