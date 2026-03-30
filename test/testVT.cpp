@@ -48,9 +48,9 @@ int main () {
 
 	for (ssize_t i = 0; i < n; i++) {
 		vtParser.feed (buf[i]);
-		auto token = vtParser.get();
-		if (token)
-			auto key = vtParser.get_decode (token.value());
+		auto key = vtParser.get();
+		if (key)
+			std::print ("Done: {}\n", BasedVT::KeyInput::PrettyKey::to_string (key->key));
 	}
 
 	unconf_term (ct);

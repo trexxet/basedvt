@@ -15,7 +15,6 @@ EventCallback ev_printable_cb;
 EventCallback ev_intermediate_cb;
 EventCallback ev_param_cb;
 EventCallback ev_colon_cb;
-EventCallback ev_semicolon_cb;
 EventCallback ev_private_cb;
 EventCallback ev_final_cb;
 EventCallback ev_csi_entry_cb;

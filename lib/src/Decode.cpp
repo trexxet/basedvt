@@ -48,7 +48,8 @@ std::optional<KeyInput> decode_print (const Token& t) {
 std::optional<KeyInput> decode_exec (const Token& t) {
 	switch (t.ch) {
 		case 0x09: return KeyInput { .key = KeyInput::Key::TAB };
-		case 0x0A: return KeyInput { .key = KeyInput::Key::ENTER };
+		case 0x0A:
+		case 0x0D: return KeyInput { .key = KeyInput::Key::ENTER };
 		case 0x1B: return KeyInput { .key = KeyInput::Key::ESCAPE };
 		case 0x7F: return KeyInput { .key = KeyInput::Key::BACKSPACE };
 		default:
