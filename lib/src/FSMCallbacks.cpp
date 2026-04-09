@@ -7,8 +7,7 @@ using ECResult = FSM::EventCallbackResult;
 
 ECResult ev_esc_cb (FSM* fsm, Context* ctx) {
 	States state = States::ST_ESC;
-	fsm->switch_state (state);
-	return state;
+	return fsm->switch_state (state);
 }
 
 ECResult ev_execute_cb (FSM* fsm, Context* ctx) {
@@ -27,8 +26,7 @@ ECResult ev_printable_cb (FSM* fsm, Context* ctx) {
 			state = States::ST_GROUND;
 			break;
 	}
-	fsm->switch_state (state);
-	return state;
+	return fsm->switch_state (state);
 }
 
 ECResult ev_intermediate_cb (FSM* fsm, Context* ctx) {
@@ -46,8 +44,7 @@ ECResult ev_intermediate_cb (FSM* fsm, Context* ctx) {
 			state = States::ST_CSI_INTER;
 			break;
 	}
-	fsm->switch_state (state);
-	return state;
+	return fsm->switch_state (state);
 }
 
 ECResult ev_param_cb (FSM* fsm, Context* ctx) {
@@ -68,8 +65,7 @@ ECResult ev_param_cb (FSM* fsm, Context* ctx) {
 			state = States::ST_CSI_IGNORE;
 			break;
 	}
-	fsm->switch_state (state);
-	return state;
+	return fsm->switch_state (state);
 }
 
 ECResult ev_colon_cb (FSM* fsm, Context* ctx) {
@@ -87,8 +83,7 @@ ECResult ev_colon_cb (FSM* fsm, Context* ctx) {
 			state = States::ST_CSI_IGNORE;
 			break;
 	}
-	fsm->switch_state (state);
-	return state;
+	return fsm->switch_state (state);
 }
 
 ECResult ev_private_cb (FSM* fsm, Context* ctx) {
@@ -109,8 +104,7 @@ ECResult ev_private_cb (FSM* fsm, Context* ctx) {
 			state = States::ST_CSI_IGNORE;
 			break;
 	}
-	fsm->switch_state (state);
-	return state;
+	return fsm->switch_state (state);
 }
 
 ECResult ev_csi_entry_cb (FSM* fsm, Context* ctx) {
@@ -120,8 +114,7 @@ ECResult ev_csi_entry_cb (FSM* fsm, Context* ctx) {
 			state = States::ST_CSI_ENTRY;
 			break;
 	}
-	fsm->switch_state (state);
-	return state;
+	return fsm->switch_state (state);
 }
 
 ECResult ev_ss3_entry_cb (FSM* fsm, Context* ctx) {
@@ -131,8 +124,7 @@ ECResult ev_ss3_entry_cb (FSM* fsm, Context* ctx) {
 			state = States::ST_SS3;
 			break;
 	}
-	fsm->switch_state (state);
-	return state;
+	return fsm->switch_state (state);
 }
 
 ECResult ev_final_cb (FSM* fsm, Context* ctx) {
@@ -151,8 +143,7 @@ ECResult ev_final_cb (FSM* fsm, Context* ctx) {
 			state = States::ST_GROUND;
 			break;
 	}
-	fsm->switch_state (state);
-	return state;
+	return fsm->switch_state (state);
 }
 
 std::optional <Events> byte_to_event (uint8_t b, FSMDetail::States currState) {
