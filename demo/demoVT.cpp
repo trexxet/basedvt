@@ -9,6 +9,8 @@
 
 #include <io.h>
 
+// TODO: linux
+
 struct ConfTerm {
 	HANDLE hIn;
 	DWORD modeSave;
@@ -33,7 +35,7 @@ void unconf_term (ConfTerm& ct) {
 int main () {
 	ConfTerm ct;
 	if (!conf_term (ct)) return 0;
-	std::print ("VT Test\n");
+	std::print ("BasedVT Demo\n");
 
 	uint8_t buf[64];
 	ssize_t n = read (STDIN_FILENO, buf, sizeof(buf));
