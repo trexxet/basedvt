@@ -1,4 +1,3 @@
-#include "Basedlib/FSM.hpp"
 #include "BasedVT/BasedVT.hpp"
 
 #include <cstdio>
@@ -8,6 +7,8 @@
 #include <windows.h>
 
 #include <io.h>
+
+#include "Basedlib/FSM.hpp"
 
 // TODO: linux
 

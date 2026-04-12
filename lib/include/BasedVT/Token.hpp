@@ -5,11 +5,6 @@
 
 #include "Basedlib/PrettyEnum.hpp"
 
-#ifdef BASEDVT_DEBUG
-#include <format>
-#include <string>
-#endif
-
 namespace BasedVT {
 
 struct Token {
@@ -41,27 +36,7 @@ struct Token {
 	}
 
 #ifdef BASEDVT_DEBUG
-	const std::string to_string() const noexcept {
-		return std::format ("Type: {} ch: {} params: {} inter: {} private: {}",
-			PrettyType::to_string (type),
-			(int) ch,
-			[this] () -> std::string {
-				if (paramsCount == 0) return "none";
-				std::string str = {};
-				for (uint8_t i = 0; i < paramsCount; i++)
-					str.append (std::format("{} ", params[i]));
-				return str;
-			} (),
-			[this] () -> std::string {
-				if (intermediatesCount == 0) return "none";
-				std::string str = {};
-				for (uint8_t i = 0; i < intermediatesCount; i++)
-					str.append (std::format("{} ", intermediates[i]));
-				return str;
-			} (),
-			privateMark > 0 ? std::format ("{}", privateMark) : "none"
-		);
-	}
+	const std::string to_string() const noexcept;
 #endif
 };
 
