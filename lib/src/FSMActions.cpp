@@ -2,7 +2,7 @@
 
 #include <array>
 
-#include "Basedlib/PrettyEnum.hpp"
+#include "Basedlib/Meta/PrettyEnum.hpp"
 #include "BasedVT/Token.hpp"
 
 #ifdef BASEDVT_DEBUG

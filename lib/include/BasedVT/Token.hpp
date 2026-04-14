@@ -3,7 +3,8 @@
 #include <array>
 #include <cstdint>
 
-#include "Basedlib/PrettyEnum.hpp"
+#include "Basedlib/Class.hpp"
+#include "Basedlib/Meta/PrettyEnum.hpp"
 
 namespace BasedVT {
 
@@ -38,6 +39,8 @@ struct Token {
 #ifdef BASEDVT_DEBUG
 	const std::string to_string() const noexcept;
 #endif
+
+	BASED_CLASS_DEFAULT_EQUALITY (Token);
 };
 
 }

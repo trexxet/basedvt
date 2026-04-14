@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include "Basedlib/FSM.hpp"
+#include "Basedlib/Core/FSM.hpp"
 #include "Token.hpp"
 
 #ifdef BASEDVT_DEBUG

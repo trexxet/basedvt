@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Basedlib/PrettyEnum.hpp"
+#include "Basedlib/Meta/PrettyEnum.hpp"
 
 #ifdef BASEDVT_DEBUG
 #include <format>
