@@ -14,7 +14,6 @@ target_compile_definitions(basedvt PRIVATE
 )
 
 set(basedvt_SOURCES
-	BasedVT.cpp
 	Decode.cpp
 	FSMActions.cpp
 	FSMCallbacks.cpp

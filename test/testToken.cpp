@@ -2,11 +2,18 @@
 #include "Basedtest/Suite.hpp"
 
 #include <format>
+#include <string>
 #include <string_view>
 
 #include "Basedlib/Container/StaticVector.hpp"
 
-using namespace std::string_view_literals;
+// microslop moment
+#ifdef __INTELLISENSE__
+#pragma diag_suppress 304
+#pragma diag_suppress 1574
+#pragma diag_suppress 3133
+#endif
+
 using namespace Basedtest;
 using namespace BasedVT;
 

@@ -5,6 +5,7 @@
 #include <optional>
 #include <vector>
 
+#include "Decode.hpp"
 #include "Key.hpp"
 #include "Tokenizer.hpp"
 
@@ -15,13 +16,19 @@ class Parser {
 public:
 	void feed (uint8_t c) { tokenizer.feed (c); }
 
-	static std::optional<KeyInput> decode (const Token& t) noexcept;
-
 	std::optional<KeyInput> get () noexcept {
 		return tokenizer.get().and_then (decode);
 	}
 
-	std::vector<KeyInput> parse_string (std::string_view str);
+	std::vector<KeyInput> parse_string (std::string_view str) {
+		std::vector<KeyInput> keys;
+		std::vector<Token> tokens = tokenizer.feed_string (str);
+		for (const Token& token : tokens) {
+			if (std::optional<KeyInput> key = decode (token))
+				keys.emplace_back (std::move (*key));
+		}
+		return keys;
+	}
 };
 
 
