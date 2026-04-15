@@ -1,9 +1,9 @@
 #pragma once
 
-#include <array>
 #include <cstdint>
 
 #include "Basedlib/Class.hpp"
+#include "Basedlib/Container/StaticVector.hpp"
 #include "Basedlib/Meta/PrettyEnum.hpp"
 
 namespace BasedVT {
@@ -20,24 +20,22 @@ struct Token {
 
 	uint8_t ch = 0;
 	uint8_t privateMark = 0;
-	std::array<int, 16> params = {};
-	uint8_t paramsCount = 0;
-	std::array<char, 4> intermediates = {};
-	uint8_t intermediatesCount = 0;
+	Basedlib::StaticVector<int, 16> params = {};
+	Basedlib::StaticVector<char, 4> intermediates = {};
 
 	void add_param (int* param) noexcept {
-		if (paramsCount < params.size())
-			params[paramsCount++] = (*param < 0) ? 0 : *param;
+		if (!params.full())
+			params.emplace_back ((*param < 0) ? 0 : *param);
 		*param = -1;
 	}
 
 	void add_intermediate (char intermediate) {
-		if (intermediatesCount < intermediates.size())
-			intermediates[intermediatesCount++] = intermediate;
+		if (!intermediates.full())
+			intermediates.emplace_back (intermediate);
 	}
 
 #ifdef BASEDVT_DEBUG
-	const std::string to_string() const noexcept;
+	std::string to_string() const noexcept;
 #endif
 
 	BASED_CLASS_DEFAULT_EQUALITY (Token);

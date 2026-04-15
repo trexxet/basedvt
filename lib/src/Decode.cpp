@@ -71,7 +71,7 @@ std::optional<KeyInput> decode_csi (const Token& t) {
 	KeyInput k;
 	bool ok = true;
 
-	if (t.paramsCount > 1)
+	if (t.params.size() > 1)
 		apply_mods (k, static_cast<uint8_t> (t.params[1]));
 
 	switch (t.ch) {
@@ -82,7 +82,7 @@ std::optional<KeyInput> decode_csi (const Token& t) {
 		case 'F': k.key = KeyInput::Key::END; break;
 		case 'H': k.key = KeyInput::Key::HOME; break;
 		case '~':
-			if (t.paramsCount > 0)
+			if (t.params.size() > 0)
 				ok = decode_tilde (k, static_cast<uint8_t> (t.params[0]));
 			break;
 		default: ok = false; break;
