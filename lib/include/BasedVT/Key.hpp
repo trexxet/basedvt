@@ -40,10 +40,11 @@ struct KeyInput {
 
 #ifdef BASEDVT_DEBUG
 	std::string to_string() const noexcept {
-		return std::format ("Key: {} ch: {} shift = {} ctrl = {} alt = {}",
-			PrettyKey::to_string (key), static_cast<int> (ch),
-			shift, ctrl, alt
-		);
+		std::string str = std::format ("Key: {} ch: {}", PrettyKey::to_string (key), static_cast<int> (ch));
+		if (shift) str.append (" shift");
+		if (ctrl) str.append (" ctrl");
+		if (alt) str.append (" alt");
+		return str;
 	}
 #endif
 

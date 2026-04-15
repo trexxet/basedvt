@@ -19,8 +19,8 @@ struct Token {
 	using PrettyType = Basedlib::PrettyEnum <Type>;
 
 	uint8_t ch = 0;
-	uint8_t privateMark = 0;
 	Basedlib::StaticVector<int, 16> params = {};
+	uint8_t privateMark = 0;
 	Basedlib::StaticVector<char, 4> intermediates = {};
 
 	void add_param (int* param) noexcept {

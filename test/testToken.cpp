@@ -88,8 +88,8 @@ BT_SCENARIO_TEST (test_token_esc) {
 BT_SCENARIO_TEST (test_token_esc_inter) {
 	BT_ASSERT_RC (Suite ("ESC Inter", cases <input_as_constref<tokenize>> (
 		make_test_token_case ("ESC SP", "\e "),
-		make_test_token_case ("ESC SP A", "\e A", Token {Token::Type::ESC, 'A', 0, {}, {' '}}),
-		make_test_token_case ("ESC !/ B", "\e!/B", Token {Token::Type::ESC, 'B', 0, {}, {'!', '/'}})
+		make_test_token_case ("ESC SP A", "\e A", Token {Token::Type::ESC, 'A', {}, 0, {' '}}),
+		make_test_token_case ("ESC !/ B", "\e!/B", Token {Token::Type::ESC, 'B', {}, 0, {'!', '/'}})
 	)).run_rc());
 	BT_SUCCESS;
 }
@@ -111,9 +111,9 @@ BT_SCENARIO_TEST (test_token_csi_simple) {
 BT_SCENARIO_TEST (test_token_csi_param) {
 	BT_ASSERT_RC (Suite ("CSI param", cases <input_as_constref<tokenize>> (
 		make_test_token_case ("CSI 1;", "\e[1;"),
-		make_test_token_case ("CSI 3~", "\e[3~", Token {Token::Type::CSI, '~', 0, {3}}),
-		make_test_token_case ("CSI 24~", "\e[24~", Token {Token::Type::CSI, '~', 0, {24}}),
-		make_test_token_case ("CSI 1;5A", "\e[1;5A", Token {Token::Type::CSI, 'A', 0, {1, 5}})
+		make_test_token_case ("CSI 3~", "\e[3~", Token {Token::Type::CSI, '~', {3}}),
+		make_test_token_case ("CSI 24~", "\e[24~", Token {Token::Type::CSI, '~', {24}}),
+		make_test_token_case ("CSI 1;5A", "\e[1;5A", Token {Token::Type::CSI, 'A', {1, 5}})
 	)).run_rc());
 	BT_SUCCESS;
 }
@@ -128,8 +128,8 @@ BT_SCENARIO_TEST (test_token_csi_param_wrong) {
 
 BT_SCENARIO_TEST (test_token_csi_private) {
 	BT_ASSERT_RC (Suite ("CSI private marker", cases <input_as_constref<tokenize>> (
-		make_test_token_case ("CSI ?25h", "\e[?25h", Token {Token::Type::CSI, 'h', '?', {25}}),
-		make_test_token_case ("CSI ?25l", "\e[?25l", Token {Token::Type::CSI, 'l', '?', {25}})
+		make_test_token_case ("CSI ?25h", "\e[?25h", Token {Token::Type::CSI, 'h', {25}, '?'}),
+		make_test_token_case ("CSI ?25l", "\e[?25l", Token {Token::Type::CSI, 'l', {25}, '?'})
 	)).run_rc());
 	BT_SUCCESS;
 }
@@ -138,9 +138,9 @@ BT_SCENARIO_TEST (test_token_csi_inter) {
 	BT_ASSERT_RC (Suite ("CSI inter", cases <input_as_constref<tokenize>> (
 		make_test_token_case ("CSI ! 1", "\e[!1"),
 		make_test_token_case ("CSI SP ;", "\e[ ;"),
-		make_test_token_case ("CSI ! p", "\e[!p", Token {Token::Type::CSI, 'p', 0, {}, {'!'}}),
-		make_test_token_case ("CSI 1 ! Q", "\e[1!Q", Token {Token::Type::CSI, 'Q', 0, {1}, {'!'}}),
-		make_test_token_case ("CSI 12;5 SP R", "\e[12;5 R", Token {Token::Type::CSI, 'R', 0, {12, 5}, {' '}})
+		make_test_token_case ("CSI ! p", "\e[!p", Token {Token::Type::CSI, 'p', {}, 0, {'!'}}),
+		make_test_token_case ("CSI 1 ! Q", "\e[1!Q", Token {Token::Type::CSI, 'Q', {1}, 0, {'!'}}),
+		make_test_token_case ("CSI 12;5 SP R", "\e[12;5 R", Token {Token::Type::CSI, 'R', {12, 5}, 0, {' '}})
 	)).run_rc());
 	BT_SUCCESS;
 }
@@ -160,7 +160,7 @@ BT_SCENARIO_TEST (test_token_mix) {
 	BT_ASSERT_RC (Suite ("Mixed", cases <input_as_constref<tokenize>> (
 		make_test_token_case ("a CSI 1;5A CR", "a\e[1;5A\r",
 			Token {Token::Type::PRINT, 'a'},
-			Token {Token::Type::CSI, 'A', 0, {1, 5}},
+			Token {Token::Type::CSI, 'A', {1, 5}},
 			Token {Token::Type::EXEC, '\r'}
 		)
 	)).run_rc());
