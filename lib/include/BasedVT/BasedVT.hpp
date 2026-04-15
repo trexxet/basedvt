@@ -17,7 +17,7 @@ public:
 
 	static std::optional<KeyInput> decode (const Token& t) noexcept;
 
-	std::optional<KeyInput> get () const noexcept {
+	std::optional<KeyInput> get () noexcept {
 		return tokenizer.get().and_then (decode);
 	}
 

@@ -16,8 +16,12 @@ public:
 	void feed (uint8_t c);
 	std::vector<Token> feed_string (std::string_view str);
 
-	std::optional<Token> get () const noexcept {
-		if (ctx.ready) return ctx.token;
+	std::optional<Token> get () noexcept {
+		if (ctx.ready) {
+			Token token = ctx.token;
+			ctx.token = {};
+			return token;
+		}
 		else return std::nullopt;
 	}
 
