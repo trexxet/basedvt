@@ -7,6 +7,8 @@
 
 namespace BasedVT {
 
-std::optional<KeyInput> decode (const Token& t);
+using OptKeyInput = std::optional<KeyInput>;
+
+OptKeyInput decode (const Token& t);
 
 }

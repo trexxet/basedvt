@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Basedlib/Class.hpp"
 #include "Basedlib/Meta/PrettyEnum.hpp"
 
 #ifdef BASEDVT_DEBUG
@@ -38,13 +39,15 @@ struct KeyInput {
 	bool alt = false;
 
 #ifdef BASEDVT_DEBUG
-	const std::string to_string() const noexcept {
+	std::string to_string() const noexcept {
 		return std::format ("Key: {} ch: {} shift = {} ctrl = {} alt = {}",
 			PrettyKey::to_string (key), static_cast<int> (ch),
 			shift, ctrl, alt
 		);
 	}
 #endif
+
+	BASED_CLASS_DEFAULT_EQUALITY (KeyInput);
 };
 
 }

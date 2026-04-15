@@ -38,14 +38,14 @@ bool decode_tilde (KeyInput& k, uint8_t param) {
 	return true;
 }
 
-std::optional<KeyInput> decode_print (const Token& t) {
+OptKeyInput decode_print (const Token& t) {
 	return KeyInput {
 		.key = KeyInput::Key::CHAR,
 		.ch = static_cast<char> (t.ch)
 	};
 }
 
-std::optional<KeyInput> decode_exec (const Token& t) {
+OptKeyInput decode_exec (const Token& t) {
 	switch (t.ch) {
 		case 0x09: return KeyInput { .key = KeyInput::Key::TAB };
 		case 0x0A:
@@ -63,11 +63,11 @@ std::optional<KeyInput> decode_exec (const Token& t) {
 	return std::nullopt;
 }
 
-std::optional<KeyInput> decode_esc (const Token& t) {
+OptKeyInput decode_esc (const Token& t) {
 	return KeyInput { .key = KeyInput::Key::ESCAPE };
 }
 
-std::optional<KeyInput> decode_csi (const Token& t) {
+OptKeyInput decode_csi (const Token& t) {
 	KeyInput k;
 	bool ok = true;
 
@@ -92,7 +92,7 @@ std::optional<KeyInput> decode_csi (const Token& t) {
 	return std::nullopt;
 }
 
-std::optional<KeyInput> decode_ss3 (const Token& t) {
+OptKeyInput decode_ss3 (const Token& t) {
 	switch (t.ch) {
 		case 'P': return KeyInput { .key = KeyInput::Key::F1 };
 		case 'Q': return KeyInput { .key = KeyInput::Key::F2 };
@@ -110,8 +110,8 @@ constexpr std::array decoder = {
 	decode_ss3
 };
 
-std::optional<KeyInput> decode (const Token& t) {
-	std::optional<KeyInput> decoded = decoder[Token::PrettyType::idx(t.type)] (t);
+OptKeyInput decode (const Token& t) {
+	OptKeyInput decoded = decoder[Token::PrettyType::idx(t.type)] (t);
 #ifdef BASEDVT_DEBUG
 	std::print ("Decode {}: {}\n",
 		Token::PrettyType::to_string(t.type),

@@ -16,7 +16,7 @@ class Parser {
 public:
 	void feed (uint8_t c) { tokenizer.feed (c); }
 
-	std::optional<KeyInput> get () noexcept {
+	OptKeyInput get () noexcept {
 		return tokenizer.get().and_then (decode);
 	}
 
@@ -24,7 +24,7 @@ public:
 		std::vector<KeyInput> keys;
 		std::vector<Token> tokens = tokenizer.feed_string (str);
 		for (const Token& token : tokens) {
-			if (std::optional<KeyInput> key = decode (token))
+			if (OptKeyInput key = decode (token))
 				keys.emplace_back (std::move (*key));
 		}
 		return keys;
