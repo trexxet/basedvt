@@ -70,8 +70,10 @@ bool decode_csi_tilde (KeyInput& k, const Token& t) {
 			return false;
 
 	switch (t.params[0]) {
+		case 1: k.key = KeyInput::Key::HOME; break;
 		case 2: k.key = KeyInput::Key::INSERT; break;
 		case 3: k.key = KeyInput::Key::DELETE; break;
+		case 4: k.key = KeyInput::Key::END; break;
 		case 5: k.key = KeyInput::Key::PAGE_UP; break;
 		case 6: k.key = KeyInput::Key::PAGE_DOWN; break;
 		case 11: k.key = KeyInput::Key::F1; break;

@@ -73,8 +73,10 @@ BT_SCENARIO_TEST (test_decode_csi_simple) {
 
 BT_SCENARIO_TEST (test_decode_csi_tilde) {
 	BT_ASSERT_RC (Suite ("CSI tilde", cases <decode> (
+		make_test_decode_case ("HOME",      Token {Token::Type::CSI, '~', {1}},  KeyInput {KeyInput::Key::HOME}),
 		make_test_decode_case ("INSERT",    Token {Token::Type::CSI, '~', {2}},  KeyInput {KeyInput::Key::INSERT}),
 		make_test_decode_case ("DELETE",    Token {Token::Type::CSI, '~', {3}},  KeyInput {KeyInput::Key::DELETE}),
+		make_test_decode_case ("END",       Token {Token::Type::CSI, '~', {4}},  KeyInput {KeyInput::Key::END}),
 		make_test_decode_case ("PAGE_UP",   Token {Token::Type::CSI, '~', {5}},  KeyInput {KeyInput::Key::PAGE_UP}),
 		make_test_decode_case ("PAGE_DOWN", Token {Token::Type::CSI, '~', {6}},  KeyInput {KeyInput::Key::PAGE_DOWN}),
 		make_test_decode_case ("F1",        Token {Token::Type::CSI, '~', {11}}, KeyInput {KeyInput::Key::F1}),
