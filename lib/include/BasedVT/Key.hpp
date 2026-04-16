@@ -34,21 +34,27 @@ struct KeyInput {
 
 	char ch = 0;
 
-	bool shift = false;
 	bool ctrl = false;
 	bool alt = false;
+	bool shift = false;
 
 #ifdef BASEDVT_DEBUG
 	std::string to_string() const noexcept {
 		std::string str = std::format ("Key: {} ch: {}", PrettyKey::to_string (key), static_cast<int> (ch));
-		if (shift) str.append (" shift");
 		if (ctrl) str.append (" ctrl");
 		if (alt) str.append (" alt");
+		if (shift) str.append (" shift");
 		return str;
 	}
 #endif
 
 	BASED_CLASS_DEFAULT_EQUALITY (KeyInput);
 };
+
+#ifdef BASEDVT_DEBUG
+inline std::string_view to_string (KeyInput::Key k) {
+	return KeyInput::PrettyKey::to_string (k);
+}
+#endif
 
 }

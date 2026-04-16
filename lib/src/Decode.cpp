@@ -8,33 +8,15 @@
 
 namespace BasedVT {
 
-void apply_mods (KeyInput& k, uint8_t mods) {
+bool apply_mods (KeyInput& k, uint8_t mods) {
 	mods -= 1;
-	if (mods >= 16) [[unlikely]] return;
+	if (mods >= 16) [[unlikely]] return false;
 
 	// TODO: add meta key (8)
 	// k.meta = (mods & 0b1000) != 0;
 	k.ctrl  = (mods & 0b0100) != 0;
 	k.alt   = (mods & 0b0010) != 0;
 	k.shift = (mods & 0b0001) != 0;
-}
-
-bool decode_tilde (KeyInput& k, uint8_t param) {
-	switch (param) {
-		case 2: k.key = KeyInput::Key::INSERT; break;
-		case 3: k.key = KeyInput::Key::DELETE; break;
-		case 5: k.key = KeyInput::Key::PAGE_UP; break;
-		case 6: k.key = KeyInput::Key::PAGE_DOWN; break;
-		case 15: k.key = KeyInput::Key::F5; break;
-		case 17: k.key = KeyInput::Key::F6; break;
-		case 18: k.key = KeyInput::Key::F7; break;
-		case 19: k.key = KeyInput::Key::F8; break;
-		case 20: k.key = KeyInput::Key::F9; break;
-		case 21: k.key = KeyInput::Key::F10; break;
-		case 23: k.key = KeyInput::Key::F11; break;
-		case 24: k.key = KeyInput::Key::F12; break;
-		default: return false;
-	}
 	return true;
 }
 
@@ -67,25 +49,60 @@ OptKeyInput decode_esc (const Token& t) {
 	return KeyInput { .key = KeyInput::Key::ESCAPE };
 }
 
+bool decode_csi_tilde (KeyInput& k, const Token& t) {
+	if (t.privateMark) return false;
+	if (!t.intermediates.empty()) return false;
+	if (t.params.empty() || t.params.size() > 2) return false;
+	if (t.params.size() == 2)
+		if (!apply_mods (k, static_cast<uint8_t> (t.params[1])))
+			return false;
+
+	switch (t.params[0]) {
+		case 2: k.key = KeyInput::Key::INSERT; break;
+		case 3: k.key = KeyInput::Key::DELETE; break;
+		case 5: k.key = KeyInput::Key::PAGE_UP; break;
+		case 6: k.key = KeyInput::Key::PAGE_DOWN; break;
+		case 15: k.key = KeyInput::Key::F5; break;
+		case 17: k.key = KeyInput::Key::F6; break;
+		case 18: k.key = KeyInput::Key::F7; break;
+		case 19: k.key = KeyInput::Key::F8; break;
+		case 20: k.key = KeyInput::Key::F9; break;
+		case 21: k.key = KeyInput::Key::F10; break;
+		case 23: k.key = KeyInput::Key::F11; break;
+		case 24: k.key = KeyInput::Key::F12; break;
+		default: return false;
+	}
+
+	return true;
+}
+
+bool decode_csi_arrow (KeyInput& k, const Token& t, KeyInput::Key key) {
+	if (t.privateMark) return false;
+	if (!t.intermediates.empty()) return false;
+	if (!t.params.empty()) {
+		if (t.params.size() == 2 && t.params[0] == 1) {
+			if (!apply_mods (k, static_cast<uint8_t> (t.params[1])))
+				return false;
+		}
+		else return false;
+	}
+	k.key = key;
+	return true;
+}
+
 OptKeyInput decode_csi (const Token& t) {
 	KeyInput k;
 	bool ok = true;
 
-	if (t.params.size() > 1)
-		apply_mods (k, static_cast<uint8_t> (t.params[1]));
-
 	switch (t.ch) {
-		case 'A': k.key = KeyInput::Key::UP; break;
-		case 'B': k.key = KeyInput::Key::DOWN; break;
-		case 'C': k.key = KeyInput::Key::RIGHT; break;
-		case 'D': k.key = KeyInput::Key::LEFT; break;
-		case 'F': k.key = KeyInput::Key::END; break;
-		case 'H': k.key = KeyInput::Key::HOME; break;
-		case '~':
-			if (t.params.size() > 0)
-				ok = decode_tilde (k, static_cast<uint8_t> (t.params[0]));
-			break;
-		default: ok = false; break;
+		case 'A': ok = decode_csi_arrow (k, t, KeyInput::Key::UP);    break;
+		case 'B': ok = decode_csi_arrow (k, t, KeyInput::Key::DOWN);  break;
+		case 'C': ok = decode_csi_arrow (k, t, KeyInput::Key::RIGHT); break;
+		case 'D': ok = decode_csi_arrow (k, t, KeyInput::Key::LEFT);  break;
+		case 'F': ok = decode_csi_arrow (k, t, KeyInput::Key::END);   break;
+		case 'H': ok = decode_csi_arrow (k, t, KeyInput::Key::HOME);  break;
+		case '~': ok = decode_csi_tilde (k, t); break;
+		default:  ok = false; break;
 	}
 
 	if (ok) return k;
