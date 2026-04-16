@@ -11,4 +11,5 @@ function(add_basedvt_test testName)
 	add_test(NAME ${testName} COMMAND ${testName})
 endfunction()
 
-add_basedvt_test(bv_test_token testToken.cpp)
+add_basedvt_test(bvt_test_token testToken.cpp)
+add_basedvt_test(bvt_test_decode testDecode.cpp)
