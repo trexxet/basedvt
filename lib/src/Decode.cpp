@@ -74,6 +74,10 @@ bool decode_csi_tilde (KeyInput& k, const Token& t) {
 		case 3: k.key = KeyInput::Key::DELETE; break;
 		case 5: k.key = KeyInput::Key::PAGE_UP; break;
 		case 6: k.key = KeyInput::Key::PAGE_DOWN; break;
+		case 11: k.key = KeyInput::Key::F1; break;
+		case 12: k.key = KeyInput::Key::F2; break;
+		case 13: k.key = KeyInput::Key::F3; break;
+		case 14: k.key = KeyInput::Key::F4; break;
 		case 15: k.key = KeyInput::Key::F5; break;
 		case 17: k.key = KeyInput::Key::F6; break;
 		case 18: k.key = KeyInput::Key::F7; break;
@@ -88,7 +92,7 @@ bool decode_csi_tilde (KeyInput& k, const Token& t) {
 	return true;
 }
 
-bool decode_csi_arrow (KeyInput& k, const Token& t, KeyInput::Key key) {
+bool decode_csi_simple (KeyInput& k, const Token& t, KeyInput::Key key) {
 	if (!t.params.empty()) {
 		if (t.params.size() == 2 && t.params[0] == 1) {
 			if (!apply_mods (k, static_cast<uint8_t> (t.params[1])))
@@ -107,12 +111,16 @@ OptKeyInput decode_csi (const Token& t) {
 	bool ok = true;
 
 	switch (t.ch) {
-		case 'A': ok = decode_csi_arrow (k, t, KeyInput::Key::UP);    break;
-		case 'B': ok = decode_csi_arrow (k, t, KeyInput::Key::DOWN);  break;
-		case 'C': ok = decode_csi_arrow (k, t, KeyInput::Key::RIGHT); break;
-		case 'D': ok = decode_csi_arrow (k, t, KeyInput::Key::LEFT);  break;
-		case 'F': ok = decode_csi_arrow (k, t, KeyInput::Key::END);   break;
-		case 'H': ok = decode_csi_arrow (k, t, KeyInput::Key::HOME);  break;
+		case 'A': ok = decode_csi_simple (k, t, KeyInput::Key::UP);    break;
+		case 'B': ok = decode_csi_simple (k, t, KeyInput::Key::DOWN);  break;
+		case 'C': ok = decode_csi_simple (k, t, KeyInput::Key::RIGHT); break;
+		case 'D': ok = decode_csi_simple (k, t, KeyInput::Key::LEFT);  break;
+		case 'F': ok = decode_csi_simple (k, t, KeyInput::Key::END);   break;
+		case 'H': ok = decode_csi_simple (k, t, KeyInput::Key::HOME);  break;
+		case 'P': ok = decode_csi_simple (k, t, KeyInput::Key::F1); break;
+		case 'Q': ok = decode_csi_simple (k, t, KeyInput::Key::F2);  break;
+		case 'R': ok = decode_csi_simple (k, t, KeyInput::Key::F3);   break;
+		case 'S': ok = decode_csi_simple (k, t, KeyInput::Key::F4);  break;
 		case '~': ok = decode_csi_tilde (k, t); break;
 		default:  ok = false; break;
 	}

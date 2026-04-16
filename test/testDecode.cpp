@@ -62,7 +62,11 @@ BT_SCENARIO_TEST (test_decode_csi_simple) {
 		make_test_decode_case ("RIGHT", Token {Token::Type::CSI, 'C'}, KeyInput {KeyInput::Key::RIGHT}),
 		make_test_decode_case ("LEFT",  Token {Token::Type::CSI, 'D'}, KeyInput {KeyInput::Key::LEFT}),
 		make_test_decode_case ("END",   Token {Token::Type::CSI, 'F'}, KeyInput {KeyInput::Key::END}),
-		make_test_decode_case ("HOME",  Token {Token::Type::CSI, 'H'}, KeyInput {KeyInput::Key::HOME})
+		make_test_decode_case ("HOME",  Token {Token::Type::CSI, 'H'}, KeyInput {KeyInput::Key::HOME}),
+		make_test_decode_case ("F1",    Token {Token::Type::CSI, 'P'}, KeyInput {KeyInput::Key::F1}),
+		make_test_decode_case ("F2",    Token {Token::Type::CSI, 'Q'}, KeyInput {KeyInput::Key::F2}),
+		make_test_decode_case ("F3",    Token {Token::Type::CSI, 'R'}, KeyInput {KeyInput::Key::F3}),
+		make_test_decode_case ("F4",    Token {Token::Type::CSI, 'S'}, KeyInput {KeyInput::Key::F4})
 	)).run_rc());
 	BT_SUCCESS;
 }
@@ -73,6 +77,10 @@ BT_SCENARIO_TEST (test_decode_csi_tilde) {
 		make_test_decode_case ("DELETE",    Token {Token::Type::CSI, '~', {3}},  KeyInput {KeyInput::Key::DELETE}),
 		make_test_decode_case ("PAGE_UP",   Token {Token::Type::CSI, '~', {5}},  KeyInput {KeyInput::Key::PAGE_UP}),
 		make_test_decode_case ("PAGE_DOWN", Token {Token::Type::CSI, '~', {6}},  KeyInput {KeyInput::Key::PAGE_DOWN}),
+		make_test_decode_case ("F1",        Token {Token::Type::CSI, '~', {11}}, KeyInput {KeyInput::Key::F1}),
+		make_test_decode_case ("F2",        Token {Token::Type::CSI, '~', {12}}, KeyInput {KeyInput::Key::F2}),
+		make_test_decode_case ("F3",        Token {Token::Type::CSI, '~', {13}}, KeyInput {KeyInput::Key::F3}),
+		make_test_decode_case ("F4",        Token {Token::Type::CSI, '~', {14}}, KeyInput {KeyInput::Key::F4}),
 		make_test_decode_case ("F5",        Token {Token::Type::CSI, '~', {15}}, KeyInput {KeyInput::Key::F5}),
 		make_test_decode_case ("F6",        Token {Token::Type::CSI, '~', {17}}, KeyInput {KeyInput::Key::F6}),
 		make_test_decode_case ("F7",        Token {Token::Type::CSI, '~', {18}}, KeyInput {KeyInput::Key::F7}),
@@ -142,6 +150,7 @@ BT_SCENARIO_TEST (test_decode_csi_mods) {
 		make_test_decode_case ("ctrl+shift RIGHT",     Token {Token::Type::CSI, 'C', {1, 6}},  KeyInput {.key = KeyInput::Key::RIGHT,     .ctrl = true, .shift = true}),
 		make_test_decode_case ("ctrl+alt+shift LEFT",  Token {Token::Type::CSI, 'D', {1, 8}},  KeyInput {.key = KeyInput::Key::LEFT,      .ctrl = true, .alt = true, .shift = true}),
 		make_test_decode_case ("ctrl DELETE",          Token {Token::Type::CSI, '~', {3, 5}},  KeyInput {.key = KeyInput::Key::DELETE,    .ctrl = true}),
+		make_test_decode_case ("shift F1",             Token {Token::Type::CSI, '~', {11, 2}}, KeyInput {.key = KeyInput::Key::F1,        .shift = true}),
 		make_test_decode_case ("alt+shift PAGE_UP",    Token {Token::Type::CSI, '~', {5, 4}},  KeyInput {.key = KeyInput::Key::PAGE_UP,   .alt = true, .shift = true}),
 		make_test_decode_case ("ctrl+shift PAGE_DOWN", Token {Token::Type::CSI, '~', {6, 6}},  KeyInput {.key = KeyInput::Key::PAGE_DOWN, .ctrl = true, .shift = true}),
 		make_test_decode_case ("ctrl+alt+shift F12",   Token {Token::Type::CSI, '~', {24, 8}}, KeyInput {.key = KeyInput::Key::F12,       .ctrl = true, .alt = true, .shift = true})
