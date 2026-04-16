@@ -20,7 +20,14 @@ bool apply_mods (KeyInput& k, uint8_t mods) {
 	return true;
 }
 
+inline bool maybe_plain_key_input (const Token& t) {
+	return (t.params.empty())
+	    && (t.privateMark == 0)
+	    && (t.intermediates.empty());
+}
+
 OptKeyInput decode_print (const Token& t) {
+	if (!maybe_plain_key_input (t)) return std::nullopt;
 	return KeyInput {
 		.key = KeyInput::Key::CHAR,
 		.ch = static_cast<char> (t.ch)
@@ -28,6 +35,7 @@ OptKeyInput decode_print (const Token& t) {
 }
 
 OptKeyInput decode_exec (const Token& t) {
+	if (!maybe_plain_key_input (t)) return std::nullopt;
 	switch (t.ch) {
 		case 0x09: return KeyInput { .key = KeyInput::Key::TAB };
 		case 0x0A:
@@ -49,10 +57,14 @@ OptKeyInput decode_esc (const Token& t) {
 	return KeyInput { .key = KeyInput::Key::ESCAPE };
 }
 
+inline bool maybe_csi_key_input (const Token& t) {
+	return (t.params.size() <= 2)
+	    && (t.privateMark == 0)
+	    && (t.intermediates.empty());
+}
+
 bool decode_csi_tilde (KeyInput& k, const Token& t) {
-	if (t.privateMark) return false;
-	if (!t.intermediates.empty()) return false;
-	if (t.params.empty() || t.params.size() > 2) return false;
+	if (t.params.empty()) return false;
 	if (t.params.size() == 2)
 		if (!apply_mods (k, static_cast<uint8_t> (t.params[1])))
 			return false;
@@ -77,8 +89,6 @@ bool decode_csi_tilde (KeyInput& k, const Token& t) {
 }
 
 bool decode_csi_arrow (KeyInput& k, const Token& t, KeyInput::Key key) {
-	if (t.privateMark) return false;
-	if (!t.intermediates.empty()) return false;
 	if (!t.params.empty()) {
 		if (t.params.size() == 2 && t.params[0] == 1) {
 			if (!apply_mods (k, static_cast<uint8_t> (t.params[1])))
@@ -91,6 +101,8 @@ bool decode_csi_arrow (KeyInput& k, const Token& t, KeyInput::Key key) {
 }
 
 OptKeyInput decode_csi (const Token& t) {
+	if (!maybe_csi_key_input (t)) return std::nullopt;
+
 	KeyInput k;
 	bool ok = true;
 
@@ -110,6 +122,7 @@ OptKeyInput decode_csi (const Token& t) {
 }
 
 OptKeyInput decode_ss3 (const Token& t) {
+	if (!maybe_plain_key_input (t)) return std::nullopt;
 	switch (t.ch) {
 		case 'P': return KeyInput { .key = KeyInput::Key::F1 };
 		case 'Q': return KeyInput { .key = KeyInput::Key::F2 };

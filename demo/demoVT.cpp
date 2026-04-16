@@ -2,7 +2,9 @@
 
 #include <cstdio>
 #include <cstdint>
+#include <format>
 #include <print>
+#include <string>
 
 #include <windows.h>
 
@@ -49,12 +51,23 @@ int main () {
 
 	BasedVT::Parser vtParser;
 
+	bool decodedAny = false;
 	for (ssize_t i = 0; i < n; i++) {
 		vtParser.feed (buf[i]);
 		auto key = vtParser.get();
-		if (key)
-			std::print ("Done: {}\n", BasedVT::KeyInput::PrettyKey::to_string (key->key));
+		if (key) {
+			std::string str = std::format ("Done: {}", BasedVT::KeyInput::PrettyKey::to_string (key->key));
+			if (key->key == BasedVT::KeyInput::Key::CHAR)
+				str.append (std::isspace (key->ch) ? " whitespace" : std::format(" {}", key->ch));
+			if (key->ctrl) str.append (" ctrl");
+			if (key->alt) str.append (" alt");
+			if (key->shift) str.append (" shift");
+			std::print ("{}\n", str);
+			decodedAny = true;
+		}
 	}
+	if (!decodedAny)
+		std::print ("No key decoded\n");
 
 	unconf_term (ct);
 	return 0;
