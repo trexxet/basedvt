@@ -28,7 +28,12 @@ public:
 	}
 
 	void switch_mode (Mode mode) noexcept { ctx.mode = mode; }
-	OptToken flush () noexcept;
+
+	OptToken flush () noexcept {
+		fsm.event (FSMDetail::Events::EV_FLUSH);
+		return get();
+	}
+
 	void reset () noexcept { fsm.event (FSMDetail::Events::EV_RESET); }
 
 	Tokenizer (Mode mode);

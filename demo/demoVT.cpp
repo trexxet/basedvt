@@ -61,7 +61,7 @@ int main () {
 	bool decodedAny = false;
 	for (ssize_t i = 0; i < n; i++) {
 		vtParser.feed (buf[i]);
-		auto key = vtParser.get();
+		auto key = (n == 1 && buf[i] == '\e') ? vtParser.flush() : vtParser.get();
 		if (key) {
 			std::string str = std::format ("Done: {}", BasedVT::KeyInput::PrettyKey::to_string (key->key));
 			if (key->key == BasedVT::KeyInput::Key::CHAR)

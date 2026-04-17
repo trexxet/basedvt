@@ -19,10 +19,6 @@ void Tokenizer::feed (uint8_t c) {
 	}
 }
 
-OptToken Tokenizer::flush () noexcept {
-	return std::nullopt;
-}
-
 std::vector<Token> Tokenizer::feed_string (std::string_view str) {
 	std::vector<Token> tokens;
 	for (char c : str) {
@@ -34,7 +30,7 @@ std::vector<Token> Tokenizer::feed_string (std::string_view str) {
 }
 
 Tokenizer::Tokenizer (Mode mode) : fsm (States::ST_GROUND, &ctx, make_callbacks ()) {
-	ctx.mode = mode;
+	switch_mode (mode);
 	reset();
 }
 

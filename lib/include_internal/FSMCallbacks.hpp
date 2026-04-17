@@ -10,6 +10,7 @@ namespace BasedVT {
 using EventCallback = FSMDetail::FSM::EventCallback;
 
 EventCallback ev_reset_cb;
+EventCallback ev_flush_cb;
 EventCallback ev_esc_cb;
 EventCallback ev_execute_cb;
 EventCallback ev_printable_cb;
@@ -28,6 +29,7 @@ consteval auto make_callbacks () {
 	constexpr auto do_clear = [] (Context* ctx) { action (Actions::AC_CLEAR, ctx); };
 	return FSM::make_callbacks (
 		FSM::event_cb <Events::EV_RESET>        (ev_reset_cb),
+		FSM::event_cb <Events::EV_FLUSH>        (ev_flush_cb),
 		FSM::event_cb <Events::EV_ESC>          (ev_esc_cb),
 		FSM::event_cb <Events::EV_EXECUTE>      (ev_execute_cb),
 		FSM::event_cb <Events::EV_PRINTABLE>    (ev_printable_cb),

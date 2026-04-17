@@ -20,6 +20,10 @@ public:
 		return tokenizer.get().and_then (decode);
 	}
 
+	OptKeyInput flush () noexcept {
+		return tokenizer.flush().and_then (decode);
+	}
+
 	std::vector<KeyInput> parse_string (std::string_view str) {
 		std::vector<KeyInput> keys;
 		std::vector<Token> tokens = tokenizer.feed_string (str);

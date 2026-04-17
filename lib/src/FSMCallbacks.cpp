@@ -11,6 +11,21 @@ ECResult ev_reset_cb (FSM* fsm, Context* ctx) {
 	return fsm->switch_state (state);
 }
 
+ECResult ev_flush_cb (FSM* fsm, Context* ctx) {
+	States state = fsm->state();
+	switch (state) {
+		case States::ST_ESC:
+			action (Actions::AC_CLEAR, ctx);
+			action (Actions::AC_ESC_DISPATCH, ctx);
+			break;
+		default:
+			action (Actions::AC_CLEAR, ctx);
+			break;
+	}
+	state = States::ST_GROUND;
+	return fsm->switch_state (state);
+}
+
 ECResult ev_esc_cb (FSM* fsm, Context* ctx) {
 	States state = States::ST_ESC;
 	return fsm->switch_state (state);

@@ -38,6 +38,7 @@ enum class States {
 
 enum class Events {
 	EV_RESET,        // Reset ctx and go to ST_GROUND
+	EV_FLUSH,        // Force an end of the sequence and try to tokenize whatever it got
 	EV_ESC,          // 0x1B
 	EV_EXECUTE,      // 0x00-0x17, 0x19, 0x1C-0x1F; 0x7F in ST_GROUND
 	EV_PRINTABLE,    // 0x20-0x7F in ST_GROUND or ST_SS3
