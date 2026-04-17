@@ -54,7 +54,16 @@ OptKeyInput decode_exec (const Token& t) {
 }
 
 OptKeyInput decode_esc (const Token& t) {
-	return KeyInput { .key = KeyInput::Key::ESCAPE };
+	if (!maybe_plain_key_input (t)) return std::nullopt;
+	if (t.ch == 0)
+		return KeyInput { .key = KeyInput::Key::ESCAPE };
+	if (t.ch >= 0x20 && t.ch <= 0x7E)
+		return KeyInput {
+			.key = KeyInput::Key::CHAR,
+			.ch = static_cast<char> (t.ch),
+			.alt = true
+		};
+	return std::nullopt;
 }
 
 inline bool maybe_csi_key_input (const Token& t) {
