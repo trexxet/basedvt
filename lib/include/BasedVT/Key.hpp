@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include "Basedlib/Class.hpp"
 #include "Basedlib/Meta/PrettyEnum.hpp"
 
@@ -50,6 +52,8 @@ struct KeyInput {
 
 	BASED_CLASS_DEFAULT_EQUALITY (KeyInput);
 };
+
+using OptKeyInput = std::optional<KeyInput>;
 
 #ifdef BASEDVT_DEBUG
 inline std::string_view to_string (KeyInput::Key k) {

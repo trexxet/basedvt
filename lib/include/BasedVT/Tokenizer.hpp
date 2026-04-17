@@ -16,7 +16,7 @@ public:
 	void feed (uint8_t c);
 	std::vector<Token> feed_string (std::string_view str);
 
-	std::optional<Token> get () noexcept {
+	OptToken get () noexcept {
 		if (ctx.ready) {
 			Token token = ctx.token;
 			ctx.token = {};

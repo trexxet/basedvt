@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <format>
 #include <print>
+#include <span>
 #include <string>
 
 #include <windows.h>
@@ -35,19 +36,25 @@ void unconf_term (ConfTerm& ct) {
 	SetConsoleMode (ct.hIn, ct.modeSave);
 }
 
-int main () {
-	ConfTerm ct;
-	if (!conf_term (ct)) return 0;
-	std::print ("BasedVT Demo\n");
-
-	uint8_t buf[64];
-	ssize_t n = read (STDIN_FILENO, buf, sizeof(buf));
+ssize_t read_input (std::span<uint8_t> buf) {
+	ssize_t n = read (STDIN_FILENO, buf.data(), buf.size());
 	std::print ("Read: {}\n", n);
 
 	for (ssize_t i = 0; i < n; i++) {
 		std::print ("0x{:02x} ", static_cast<int>(buf[i]));
 	}
 	std::putchar ('\n');
+
+	return n;
+}
+
+int main () {
+	ConfTerm ct;
+	if (!conf_term (ct)) return 0;
+	std::print ("BasedVT Demo\n");
+
+	uint8_t buf[64];
+	ssize_t n = read_input (buf);
 
 	BasedVT::Parser vtParser;
 

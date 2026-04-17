@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <optional>
 
 #include "Basedlib/Class.hpp"
 #include "Basedlib/Container/StaticVector.hpp"
@@ -40,5 +41,7 @@ struct Token {
 
 	BASED_CLASS_DEFAULT_EQUALITY (Token);
 };
+
+using OptToken = std::optional<Token>;
 
 }

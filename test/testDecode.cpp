@@ -50,7 +50,10 @@ BT_SCENARIO_TEST (test_decode_exec) {
 
 BT_SCENARIO_TEST (test_decode_esc) {
 	BT_ASSERT_RC (Suite ("ESC", cases <decode> (
-		make_test_decode_case ("ESCAPE", Token {Token::Type::ESC}, KeyInput {KeyInput::Key::ESCAPE})
+		make_test_decode_case ("ESCAPE", Token {Token::Type::ESC}, KeyInput {KeyInput::Key::ESCAPE}),
+		make_test_decode_case ("alt A",  Token {Token::Type::ESC, 'A'},  KeyInput {.key = KeyInput::Key::CHAR, .ch = 'A', .alt = true}),
+		make_test_decode_case ("alt a",  Token {Token::Type::ESC, 'a'},  KeyInput {.key = KeyInput::Key::CHAR, .ch = 'a', .alt = true}),
+		make_test_decode_case ("alt 1",  Token {Token::Type::ESC, '1'},  KeyInput {.key = KeyInput::Key::CHAR, .ch = '1', .alt = true})
 	)).run_rc());
 	BT_SUCCESS;
 }

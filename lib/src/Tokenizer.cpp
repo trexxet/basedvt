@@ -23,7 +23,7 @@ std::vector<Token> Tokenizer::feed_string (std::string_view str) {
 	std::vector<Token> tokens;
 	for (char c : str) {
 		feed (c);
-		if (std::optional<Token> token = get())
+		if (OptToken token = get())
 			tokens.emplace_back (std::move (*token));
 	}
 	return tokens;
