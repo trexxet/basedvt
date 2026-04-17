@@ -36,7 +36,8 @@ Tokenizer tokenizer (Tokenizer::Mode::STRICT);
 
 Tokens tokenize (std::string_view str, Tokenizer::Mode mode) {
 	auto tokens = Tokens (tokenizer.feed_string (str));
-	tokenizer.reset (mode);
+	tokenizer.switch_mode (mode);
+	tokenizer.reset ();
 	return tokens;
 }
 

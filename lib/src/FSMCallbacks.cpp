@@ -5,6 +5,12 @@ namespace BasedVT {
 using namespace FSMDetail;
 using ECResult = FSM::EventCallbackResult;
 
+ECResult ev_reset_cb (FSM* fsm, Context* ctx) {
+	action (Actions::AC_CLEAR, ctx);
+	States state = States::ST_GROUND;
+	return fsm->switch_state (state);
+}
+
 ECResult ev_esc_cb (FSM* fsm, Context* ctx) {
 	States state = States::ST_ESC;
 	return fsm->switch_state (state);

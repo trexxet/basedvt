@@ -19,16 +19,10 @@ enum class Mode {
 
 struct Context {
 	Mode mode;
-	uint8_t currByte;
-	int currParam;
-	Token token;
-	bool ready;
-	void reset () noexcept {
-		currByte = 0;
-		currParam = -1;
-		token = {};
-		ready = false;
-	}
+	uint8_t currByte = 0;
+	int currParam = -1;
+	Token token = {};
+	bool ready = false;
 };
 
 enum class States {
@@ -43,6 +37,7 @@ enum class States {
 };
 
 enum class Events {
+	EV_RESET,        // Reset ctx and go to ST_GROUND
 	EV_ESC,          // 0x1B
 	EV_EXECUTE,      // 0x00-0x17, 0x19, 0x1C-0x1F; 0x7F in ST_GROUND
 	EV_PRINTABLE,    // 0x20-0x7F in ST_GROUND or ST_SS3

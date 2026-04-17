@@ -33,14 +33,9 @@ std::vector<Token> Tokenizer::feed_string (std::string_view str) {
 	return tokens;
 }
 
-void Tokenizer::reset () noexcept {
-	ctx.reset();
-	fsm.switch_state (States::ST_GROUND);
-}
-
 Tokenizer::Tokenizer (Mode mode) : fsm (States::ST_GROUND, &ctx, make_callbacks ()) {
-	ctx.reset();
 	ctx.mode = mode;
+	reset();
 }
 
 #ifdef BASEDVT_DEBUG

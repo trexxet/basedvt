@@ -21,7 +21,7 @@ public:
 	OptToken get () noexcept {
 		if (ctx.ready) {
 			Token token = ctx.token;
-			ctx.reset();
+			reset();
 			return token;
 		}
 		else return std::nullopt;
@@ -29,11 +29,7 @@ public:
 
 	void switch_mode (Mode mode) noexcept { ctx.mode = mode; }
 	OptToken flush () noexcept;
-	void reset () noexcept;
-	void reset (Mode mode) noexcept {
-		switch_mode (mode);
-		reset();
-	}
+	void reset () noexcept { fsm.event (FSMDetail::Events::EV_RESET); }
 
 	Tokenizer (Mode mode);
 };
