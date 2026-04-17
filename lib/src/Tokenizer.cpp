@@ -13,7 +13,7 @@ namespace BasedVT {
 using namespace FSMDetail;
 
 void Tokenizer::feed (uint8_t c) {
-	if (std::optional<Events> ev = byte_to_event (c, fsm.state())) {
+	if (std::optional<Events> ev = byte_to_event (c, mode, fsm.state())) {
 		ctx.currByte = c;
 		fsm.event (ev.value());
 	}

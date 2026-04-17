@@ -22,7 +22,7 @@ EventCallback ev_final_cb;
 EventCallback ev_csi_entry_cb;
 EventCallback ev_ss3_entry_cb;
 
-std::optional <FSMDetail::Events> byte_to_event (uint8_t b, FSMDetail::States currState);
+std::optional <FSMDetail::Events> byte_to_event (uint8_t b, FSMDetail::Mode mode, FSMDetail::States state);
 
 consteval auto make_callbacks () {
 	using namespace FSMDetail;

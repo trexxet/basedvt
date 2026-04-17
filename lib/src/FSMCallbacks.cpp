@@ -167,26 +167,28 @@ ECResult ev_final_cb (FSM* fsm, Context* ctx) {
 	return fsm->switch_state (state);
 }
 
-std::optional <Events> byte_to_event (uint8_t b, FSMDetail::States currState) {
+std::optional <Events> byte_to_event (uint8_t b, FSMDetail::Mode mode, FSMDetail::States state) {
 	switch (b) {
 		case 0x00 ... 0x1A:
 		case 0x1C ... 0x1F: return Events::EV_EXECUTE;
 		case 0x1B: return Events::EV_ESC;
 	};
 
-	if (currState == States::ST_GROUND) {
+	if (state == States::ST_GROUND) {
 		if (b == 0x7F) return Events::EV_EXECUTE;
 	}
 
-	if (currState == States::ST_GROUND || currState == States::ST_SS3) [[likely]] {
+	if (state == States::ST_GROUND || state == States::ST_SS3) [[likely]] {
 		if (b >= 0x20 && b <= 0x7E) [[likely]]
 			return Events::EV_PRINTABLE;
 		return std::nullopt;
 	}
 
-	if (currState == States::ST_ESC) {
+	if (state == States::ST_ESC) {
 		if (b == 0x5B) return Events::EV_CSI_ENTRY;
 		if (b == 0x4F) return Events::EV_SS3_ENTRY;
+		if (mode == Mode::INPUT && b >= 0x20 && b <= 0x7E)
+			return Events::EV_FINAL;
 	}
 
 	switch (b) {
