@@ -19,6 +19,10 @@ void Tokenizer::feed (uint8_t c) {
 	}
 }
 
+OptToken Tokenizer::flush () noexcept {
+	return std::nullopt;
+}
+
 std::vector<Token> Tokenizer::feed_string (std::string_view str) {
 	std::vector<Token> tokens;
 	for (char c : str) {
@@ -30,11 +34,14 @@ std::vector<Token> Tokenizer::feed_string (std::string_view str) {
 }
 
 void Tokenizer::reset () noexcept {
-	ctx = {};
+	ctx.reset();
 	fsm.switch_state (States::ST_GROUND);
 }
 
-Tokenizer::Tokenizer () : fsm (States::ST_GROUND, &ctx, make_callbacks ()) { }
+Tokenizer::Tokenizer (Mode mode) : fsm (States::ST_GROUND, &ctx, make_callbacks ()) {
+	ctx.reset();
+	ctx.mode = mode;
+}
 
 #ifdef BASEDVT_DEBUG
 std::string Token::to_string() const noexcept {

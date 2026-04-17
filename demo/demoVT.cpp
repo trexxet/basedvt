@@ -56,7 +56,7 @@ int main () {
 	uint8_t buf[64];
 	ssize_t n = read_input (buf);
 
-	BasedVT::Parser vtParser;
+	BasedVT::Parser vtParser (BasedVT::Tokenizer::Mode::INPUT);
 
 	bool decodedAny = false;
 	for (ssize_t i = 0; i < n; i++) {

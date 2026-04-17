@@ -32,7 +32,7 @@ void execute (Context* ctx) {
 }
 
 void clear (Context* ctx) {
-	*ctx = {};
+	ctx->reset();
 }
 
 void collect (Context* ctx) {

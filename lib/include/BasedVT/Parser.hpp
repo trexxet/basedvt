@@ -29,6 +29,10 @@ public:
 		}
 		return keys;
 	}
+
+	void switch_mode (Tokenizer::Mode mode) noexcept { tokenizer.switch_mode (mode); }
+
+	Parser (Tokenizer::Mode mode) : tokenizer (mode) { }
 };
 
 

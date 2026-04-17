@@ -32,12 +32,20 @@ std::string to_string (const Tokens& tokens) {
 }
 #endif
 
-Tokenizer tokenizer;
+Tokenizer tokenizer (Tokenizer::Mode::STRICT);
 
-Tokens tokenize (std::string_view str) {
+Tokens tokenize (std::string_view str, Tokenizer::Mode mode) {
 	auto tokens = Tokens (tokenizer.feed_string (str));
-	tokenizer.reset();
+	tokenizer.reset (mode);
 	return tokens;
+}
+
+Tokens tokenize_strict (std::string_view str) {
+	return tokenize (str, Tokenizer::Mode::STRICT);
+}
+
+Tokens tokenize_input (std::string_view str) {
+	return tokenize (str, Tokenizer::Mode::INPUT);
 }
 
 template <typename... Args>
@@ -46,7 +54,7 @@ constexpr auto make_test_token_case (std::string_view name, std::string_view inp
 }
 
 BT_SCENARIO_TEST (test_token_print) {
-	BT_ASSERT_RC (Suite ("PRINT", cases <input_as_constref<tokenize>> (
+	BT_ASSERT_RC (Suite ("PRINT", cases <input_as_constref<tokenize_strict>> (
 		make_test_token_case ("a", "a", Token {Token::Type::PRINT, 'a'}),
 		make_test_token_case ("[", "[", Token {Token::Type::PRINT, '['}),
 		make_test_token_case ("O", "O", Token {Token::Type::PRINT, 'O'}),
@@ -67,7 +75,7 @@ BT_SCENARIO_TEST (test_token_print) {
 }
 
 BT_SCENARIO_TEST (test_token_exec) {
-	BT_ASSERT_RC (Suite ("EXEC", cases <input_as_constref<tokenize>> (
+	BT_ASSERT_RC (Suite ("EXEC", cases <input_as_constref<tokenize_strict>> (
 		make_test_token_case ("CR",  "\r",   Token {Token::Type::EXEC, '\r'}),
 		make_test_token_case ("LF",  "\n",   Token {Token::Type::EXEC, '\n'}),
 		make_test_token_case ("TAB", "\t",   Token {Token::Type::EXEC, '\t'}),
@@ -77,7 +85,7 @@ BT_SCENARIO_TEST (test_token_exec) {
 }
 
 BT_SCENARIO_TEST (test_token_esc) {
-	BT_ASSERT_RC (Suite ("ESC", cases <input_as_constref<tokenize>> (
+	BT_ASSERT_RC (Suite ("ESC", cases <input_as_constref<tokenize_strict>> (
 		make_test_token_case ("ESC",     "\e"),
 		make_test_token_case ("ESC ESC", "\e\e"),
 		make_test_token_case ("ESC A",   "\eA", Token {Token::Type::ESC, 'A'})
@@ -86,7 +94,7 @@ BT_SCENARIO_TEST (test_token_esc) {
 }
 
 BT_SCENARIO_TEST (test_token_esc_inter) {
-	BT_ASSERT_RC (Suite ("ESC Inter", cases <input_as_constref<tokenize>> (
+	BT_ASSERT_RC (Suite ("ESC Inter", cases <input_as_constref<tokenize_strict>> (
 		make_test_token_case ("ESC SP",   "\e "),
 		make_test_token_case ("ESC SP A", "\e A",  Token {Token::Type::ESC, 'A', {}, 0, {' '}}),
 		make_test_token_case ("ESC !/ B", "\e!/B", Token {Token::Type::ESC, 'B', {}, 0, {'!', '/'}})
@@ -95,7 +103,7 @@ BT_SCENARIO_TEST (test_token_esc_inter) {
 }
 
 BT_SCENARIO_TEST (test_token_csi_simple) {
-	BT_ASSERT_RC (Suite ("CSI simple", cases <input_as_constref<tokenize>> (
+	BT_ASSERT_RC (Suite ("CSI simple", cases <input_as_constref<tokenize_strict>> (
 		make_test_token_case ("CSI",         "\e["),
 		make_test_token_case ("CSI CSI",     "\e[\e["),
 		make_test_token_case ("CSI A",       "\e[A",       Token {Token::Type::CSI, 'A'}),
@@ -109,7 +117,7 @@ BT_SCENARIO_TEST (test_token_csi_simple) {
 }
 
 BT_SCENARIO_TEST (test_token_csi_param) {
-	BT_ASSERT_RC (Suite ("CSI param", cases <input_as_constref<tokenize>> (
+	BT_ASSERT_RC (Suite ("CSI param", cases <input_as_constref<tokenize_strict>> (
 		make_test_token_case ("CSI 1;",   "\e[1;"),
 		make_test_token_case ("CSI 3~",   "\e[3~",   Token {Token::Type::CSI, '~', {3}}),
 		make_test_token_case ("CSI 24~",  "\e[24~",  Token {Token::Type::CSI, '~', {24}}),
@@ -119,7 +127,7 @@ BT_SCENARIO_TEST (test_token_csi_param) {
 }
 
 BT_SCENARIO_TEST (test_token_csi_param_wrong) {
-	BT_ASSERT_RC (Suite ("CSI param wrong", cases <input_as_constref<tokenize>> (
+	BT_ASSERT_RC (Suite ("CSI param wrong", cases <input_as_constref<tokenize_strict>> (
 		make_test_token_case ("CSI :A",  "\e[:A"),
 		make_test_token_case ("CSI 1:A", "\e[1:A")
 	)).run_rc());
@@ -127,7 +135,7 @@ BT_SCENARIO_TEST (test_token_csi_param_wrong) {
 }
 
 BT_SCENARIO_TEST (test_token_csi_private) {
-	BT_ASSERT_RC (Suite ("CSI private marker", cases <input_as_constref<tokenize>> (
+	BT_ASSERT_RC (Suite ("CSI private marker", cases <input_as_constref<tokenize_strict>> (
 		make_test_token_case ("CSI ?25h", "\e[?25h", Token {Token::Type::CSI, 'h', {25}, '?'}),
 		make_test_token_case ("CSI ?25l", "\e[?25l", Token {Token::Type::CSI, 'l', {25}, '?'})
 	)).run_rc());
@@ -135,7 +143,7 @@ BT_SCENARIO_TEST (test_token_csi_private) {
 }
 
 BT_SCENARIO_TEST (test_token_csi_inter) {
-	BT_ASSERT_RC (Suite ("CSI inter", cases <input_as_constref<tokenize>> (
+	BT_ASSERT_RC (Suite ("CSI inter", cases <input_as_constref<tokenize_strict>> (
 		make_test_token_case ("CSI ! 1",       "\e[!1"),
 		make_test_token_case ("CSI SP ;",      "\e[ ;"),
 		make_test_token_case ("CSI ! p",       "\e[!p",     Token {Token::Type::CSI, 'p', {}, 0, {'!'}}),
@@ -146,7 +154,7 @@ BT_SCENARIO_TEST (test_token_csi_inter) {
 }
 
 BT_SCENARIO_TEST (test_token_ss3) {
-	BT_ASSERT_RC (Suite ("SS3", cases <input_as_constref<tokenize>> (
+	BT_ASSERT_RC (Suite ("SS3", cases <input_as_constref<tokenize_strict>> (
 		make_test_token_case ("SS3", "\eO"),
 		make_test_token_case ("SS3 A", "\eOA", Token {Token::Type::SS3, 'A'}),
 		make_test_token_case ("SS3 B", "\eOB", Token {Token::Type::SS3, 'B'}),
@@ -157,7 +165,7 @@ BT_SCENARIO_TEST (test_token_ss3) {
 }
 
 BT_SCENARIO_TEST (test_token_mix) {
-	BT_ASSERT_RC (Suite ("Mixed", cases <input_as_constref<tokenize>> (
+	BT_ASSERT_RC (Suite ("Mixed", cases <input_as_constref<tokenize_strict>> (
 		make_test_token_case ("a CSI 1;5A CR", "a\e[1;5A\r",
 			Token {Token::Type::PRINT, 'a'},
 			Token {Token::Type::CSI, 'A', {1, 5}},

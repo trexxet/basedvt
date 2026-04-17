@@ -12,11 +12,23 @@
 
 namespace BasedVT::FSMDetail {
 
+enum class Mode {
+	STRICT,
+	INPUT
+};
+
 struct Context {
-	uint8_t currByte = 0;
-	int currParam = -1;
-	Token token = {};
-	bool ready = false;
+	Mode mode;
+	uint8_t currByte;
+	int currParam;
+	Token token;
+	bool ready;
+	void reset () noexcept {
+		currByte = 0;
+		currParam = -1;
+		token = {};
+		ready = false;
+	}
 };
 
 enum class States {
