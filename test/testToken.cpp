@@ -84,12 +84,32 @@ BT_SCENARIO_TEST (test_token_exec) {
 }
 
 BT_SCENARIO_TEST (test_token_esc) {
-	BT_ASSERT_RC (Suite ("ESC", cases <input_as_constref<tokenize<Mode::STRICT>>> (
+	BT_ASSERT_RC (Suite ("ESC (strict)", cases <input_as_constref<tokenize<Mode::STRICT>>> (
 		make_test_token_case ("ESC",     "\e"),
 		make_test_token_case ("ESC ESC", "\e\e"),
+		make_test_token_case ("ESC A",   "\eA",  Token {Token::Type::ESC, 'A'}),
+		make_test_token_case ("ESC 0",   "\e0",  Token {Token::Type::ESC, '0'}),
+		make_test_token_case ("ESC ;",   "\e;",  Token {Token::Type::ESC, ';'}),
+		make_test_token_case ("ESC :",   "\e:",  Token {Token::Type::ESC, ':'}),
+		make_test_token_case ("ESC ?",   "\e?",  Token {Token::Type::ESC, '?'}),
+		make_test_token_case ("ESC ~",   "\e~",  Token {Token::Type::ESC, '~'})
+	)).run_rc());
+	BT_ASSERT_RC (Suite ("ESC flush (strict)", cases <input_as_constref<tokenize<Mode::STRICT, true>>> (
+		make_test_token_case ("ESC",     "\e",   Token {Token::Type::ESC}),
+		make_test_token_case ("ESC ESC", "\e\e", Token {Token::Type::ESC}),
 		make_test_token_case ("ESC A",   "\eA",  Token {Token::Type::ESC, 'A'})
 	)).run_rc());
-	BT_ASSERT_RC (Suite ("ESC flush", cases <input_as_constref<tokenize<Mode::STRICT, true>>> (
+	BT_ASSERT_RC (Suite ("ESC (input)", cases <input_as_constref<tokenize<Mode::INPUT>>> (
+		make_test_token_case ("ESC",     "\e"),
+		make_test_token_case ("ESC ESC", "\e\e"),
+		make_test_token_case ("ESC A",   "\eA",  Token {Token::Type::ESC, 'A'}),
+		make_test_token_case ("ESC 0",   "\e0",  Token {Token::Type::ESC, '0'}),
+		make_test_token_case ("ESC ;",   "\e;",  Token {Token::Type::ESC, ';'}),
+		make_test_token_case ("ESC :",   "\e:",  Token {Token::Type::ESC, ':'}),
+		make_test_token_case ("ESC ?",   "\e?",  Token {Token::Type::ESC, '?'}),
+		make_test_token_case ("ESC ~",   "\e~",  Token {Token::Type::ESC, '~'})
+	)).run_rc());
+	BT_ASSERT_RC (Suite ("ESC flush (input)", cases <input_as_constref<tokenize<Mode::INPUT, true>>> (
 		make_test_token_case ("ESC",     "\e",   Token {Token::Type::ESC}),
 		make_test_token_case ("ESC ESC", "\e\e", Token {Token::Type::ESC}),
 		make_test_token_case ("ESC A",   "\eA",  Token {Token::Type::ESC, 'A'})
@@ -98,10 +118,21 @@ BT_SCENARIO_TEST (test_token_esc) {
 }
 
 BT_SCENARIO_TEST (test_token_esc_inter) {
-	BT_ASSERT_RC (Suite ("ESC Inter", cases <input_as_constref<tokenize<Mode::STRICT>>> (
+	BT_ASSERT_RC (Suite ("ESC Inter (strict)", cases <input_as_constref<tokenize<Mode::STRICT>>> (
 		make_test_token_case ("ESC SP",   "\e "),
 		make_test_token_case ("ESC SP A", "\e A",  Token {Token::Type::ESC, 'A', {}, 0, {' '}}),
-		make_test_token_case ("ESC !/ B", "\e!/B", Token {Token::Type::ESC, 'B', {}, 0, {'!', '/'}})
+		make_test_token_case ("ESC !/ B", "\e!/B", Token {Token::Type::ESC, 'B', {}, 0, {'!', '/'}}),
+		make_test_token_case ("ESC / 0",  "\e/0",  Token {Token::Type::ESC, '0', {}, 0, {'/'}}),
+		make_test_token_case ("ESC / :",  "\e/:",  Token {Token::Type::ESC, ':', {}, 0, {'/'}}),
+		make_test_token_case ("ESC / ?",  "\e/?",  Token {Token::Type::ESC, '?', {}, 0, {'/'}})
+	)).run_rc());
+	BT_ASSERT_RC (Suite ("ESC Inter (input)", cases <input_as_constref<tokenize<Mode::INPUT>>> (
+		make_test_token_case ("ESC SP",   "\e ",   Token {Token::Type::ESC, ' '}),
+		make_test_token_case ("ESC SP A", "\e A",  Token {Token::Type::ESC, ' '}, Token {Token::Type::PRINT, 'A'}),
+		make_test_token_case ("ESC !/ B", "\e!/B", Token {Token::Type::ESC, '!'}, Token {Token::Type::PRINT, '/'}, Token {Token::Type::PRINT, 'B'}),
+		make_test_token_case ("ESC / 0",  "\e/0",  Token {Token::Type::ESC, '/'}, Token {Token::Type::PRINT, '0'}),
+		make_test_token_case ("ESC / :",  "\e/:",  Token {Token::Type::ESC, '/'}, Token {Token::Type::PRINT, ':'}),
+		make_test_token_case ("ESC / ?",  "\e/?",  Token {Token::Type::ESC, '/'}, Token {Token::Type::PRINT, '?'})
 	)).run_rc());
 	BT_SUCCESS;
 }
