@@ -20,7 +20,7 @@ inline bool in_intermediate_range (uint8_t b) {
 	return (b >= 0x20 && b <= 0x2F);
 }
 
-OptEvent classifier_ground (uint8_t b, FSMDetail::Mode mode) {
+OptEvent classifier_ground (uint8_t b) {
 	if (in_printable_range (b)) [[likely]]
 		return Events::EV_PRINTABLE;
 	if (b == DEL)
@@ -28,19 +28,11 @@ OptEvent classifier_ground (uint8_t b, FSMDetail::Mode mode) {
 	return std::nullopt;
 }
 
-OptEvent classifier_esc (uint8_t b, FSMDetail::Mode mode) {
+OptEvent classifier_esc (uint8_t b) {
 	if (b == CSI_ENTRY) [[likely]]
 		return Events::EV_CSI_ENTRY;
 	if (b == SS3_ENTRY)
 		return Events::EV_SS3_ENTRY;
-	if (mode == Mode::STRICT && in_intermediate_range (b))
-		return Events::EV_INTERMEDIATE;
-	if (in_printable_range (b))
-		return Events::EV_FINAL;
-	return std::nullopt;
-}
-
-OptEvent classifier_esc_inter (uint8_t b, FSMDetail::Mode mode) {
 	if (in_intermediate_range (b))
 		return Events::EV_INTERMEDIATE;
 	if (in_printable_range (b))
@@ -48,7 +40,15 @@ OptEvent classifier_esc_inter (uint8_t b, FSMDetail::Mode mode) {
 	return std::nullopt;
 }
 
-OptEvent classifier_csi (uint8_t b, FSMDetail::Mode mode) {
+OptEvent classifier_esc_inter (uint8_t b) {
+	if (in_intermediate_range (b))
+		return Events::EV_INTERMEDIATE;
+	if (in_printable_range (b))
+		return Events::EV_FINAL;
+	return std::nullopt;
+}
+
+OptEvent classifier_csi (uint8_t b) {
 	switch (b) {
 		case 0x20 ... 0x2F: return Events::EV_INTERMEDIATE;
 		case 0x30 ... 0x39:
@@ -60,7 +60,7 @@ OptEvent classifier_csi (uint8_t b, FSMDetail::Mode mode) {
 	return std::nullopt;
 }
 
-OptEvent classifier_ss3 (uint8_t b, FSMDetail::Mode mode) {
+OptEvent classifier_ss3 (uint8_t b) {
 	if (in_printable_range (b)) [[likely]]
 		return Events::EV_FINAL;
 	return std::nullopt;
@@ -77,7 +77,7 @@ constexpr std::array classifiers = {
 	classifier_ss3
 };
 
-OptEvent classify_byte (uint8_t b, FSMDetail::Mode mode, FSMDetail::States state) {
+OptEvent classify_byte (uint8_t b, FSMDetail::States state) {
 	switch (b) {
 		case 0x00 ... 0x1A:
 		case 0x1C ... 0x1F: return Events::EV_EXECUTE;
@@ -85,7 +85,7 @@ OptEvent classify_byte (uint8_t b, FSMDetail::Mode mode, FSMDetail::States state
 	};
 
 	using PrettyState = Basedlib::PrettyEnum<FSMDetail::States>;
-	return classifiers [PrettyState::idx (state)] (b, mode);
+	return classifiers [PrettyState::idx (state)] (b);
 }
 
 }

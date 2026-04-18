@@ -14,7 +14,7 @@ namespace BasedVT {
 using namespace FSMDetail;
 
 void Tokenizer::feed (uint8_t c) {
-	if (OptEvent ev = classify_byte (c, mode, fsm.state())) {
+	if (OptEvent ev = classify_byte (c, fsm.state())) {
 		ctx.currByte = c;
 		fsm.event (ev.value());
 	}
@@ -32,7 +32,6 @@ std::vector<Token> Tokenizer::feed_string (std::string_view str) {
 
 Tokenizer::Tokenizer (Mode mode) : fsm (States::ST_GROUND, &ctx, make_callbacks ()) {
 	switch_mode (mode);
-	reset();
 }
 
 #ifdef BASEDVT_DEBUG

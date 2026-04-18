@@ -18,6 +18,7 @@ enum class Mode {
 };
 
 struct Context {
+	Mode mode;
 	uint8_t currByte = 0;
 	int currParam = -1;
 	Token token = {};

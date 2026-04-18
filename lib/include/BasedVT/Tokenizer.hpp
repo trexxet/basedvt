@@ -12,7 +12,6 @@ namespace BasedVT {
 class Tokenizer {
 	FSMDetail::Context ctx;
 	FSMDetail::FSM fsm;
-	FSMDetail::Mode mode;
 public:
 	using Mode = FSMDetail::Mode;
 
@@ -28,7 +27,10 @@ public:
 		else return std::nullopt;
 	}
 
-	void switch_mode (Mode mode) noexcept { this->mode = mode; }
+	void switch_mode (Mode mode) noexcept {
+		ctx.mode = mode;
+		reset();
+	}
 
 	OptToken flush () noexcept {
 		fsm.event (FSMDetail::Events::EV_FLUSH);

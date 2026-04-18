@@ -32,7 +32,8 @@ void execute (Context* ctx) {
 }
 
 void clear (Context* ctx) {
-	*ctx = {};
+	Mode modeSave = ctx->mode;
+	*ctx = {.mode = modeSave};
 }
 
 void collect (Context* ctx) {

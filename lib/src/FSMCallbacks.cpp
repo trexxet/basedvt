@@ -50,6 +50,8 @@ ECResult ev_intermediate_cb (FSM* fsm, Context* ctx) {
 	States state = fsm->state();
 	switch (state) {
 		case States::ST_ESC:
+			if (ctx->mode == Mode::INPUT)
+				return fsm->event (Events::EV_FINAL); [[fallthrough]];
 		case States::ST_ESC_INTER:
 			action (Actions::AC_COLLECT, ctx);
 			state = States::ST_ESC_INTER;

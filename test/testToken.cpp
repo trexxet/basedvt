@@ -43,7 +43,6 @@ Tokens tokenize (std::string_view str) {
 		if (OptToken flushToken = tokenizer.flush())
 			tokens.emplace_back (std::move (*flushToken));
 	}
-	tokenizer.reset ();
 	return tokens;
 }
 
@@ -120,6 +119,7 @@ BT_SCENARIO_TEST (test_token_esc) {
 BT_SCENARIO_TEST (test_token_esc_inter) {
 	BT_ASSERT_RC (Suite ("ESC Inter (strict)", cases <input_as_constref<tokenize<Mode::STRICT>>> (
 		make_test_token_case ("ESC SP",   "\e "),
+		make_test_token_case ("ESC /",    "\e/"),
 		make_test_token_case ("ESC SP A", "\e A",  Token {Token::Type::ESC, 'A', {}, 0, {' '}}),
 		make_test_token_case ("ESC !/ B", "\e!/B", Token {Token::Type::ESC, 'B', {}, 0, {'!', '/'}}),
 		make_test_token_case ("ESC / 0",  "\e/0",  Token {Token::Type::ESC, '0', {}, 0, {'/'}}),
@@ -128,6 +128,7 @@ BT_SCENARIO_TEST (test_token_esc_inter) {
 	)).run_rc());
 	BT_ASSERT_RC (Suite ("ESC Inter (input)", cases <input_as_constref<tokenize<Mode::INPUT>>> (
 		make_test_token_case ("ESC SP",   "\e ",   Token {Token::Type::ESC, ' '}),
+		make_test_token_case ("ESC /",    "\e/",   Token {Token::Type::ESC, '/'}),
 		make_test_token_case ("ESC SP A", "\e A",  Token {Token::Type::ESC, ' '}, Token {Token::Type::PRINT, 'A'}),
 		make_test_token_case ("ESC !/ B", "\e!/B", Token {Token::Type::ESC, '!'}, Token {Token::Type::PRINT, '/'}, Token {Token::Type::PRINT, 'B'}),
 		make_test_token_case ("ESC / 0",  "\e/0",  Token {Token::Type::ESC, '/'}, Token {Token::Type::PRINT, '0'}),
