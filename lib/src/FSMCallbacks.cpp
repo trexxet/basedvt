@@ -18,6 +18,12 @@ ECResult ev_flush_cb (FSM* fsm, Context* ctx) {
 			action (Actions::AC_CLEAR, ctx);
 			action (Actions::AC_ESC_DISPATCH, ctx);
 			break;
+		case States::ST_CSI_ENTRY:
+		case States::ST_SS3:
+			if (ctx->mode == Mode::INPUT) {
+				action (Actions::AC_ESC_DISPATCH, ctx);
+				break;
+			} [[fallthrough]];
 		default:
 			action (Actions::AC_CLEAR, ctx);
 			break;

@@ -135,6 +135,10 @@ BT_SCENARIO_TEST (test_token_esc_inter) {
 		make_test_token_case ("ESC / :",  "\e/:",  Token {Token::Type::ESC, '/'}, Token {Token::Type::PRINT, ':'}),
 		make_test_token_case ("ESC / ?",  "\e/?",  Token {Token::Type::ESC, '/'}, Token {Token::Type::PRINT, '?'})
 	)).run_rc());
+	BT_ASSERT_RC (Suite ("ESC Inter flush (strict)", cases <input_as_constref<tokenize<Mode::STRICT, true>>> (
+		make_test_token_case ("ESC SP",   "\e "),
+		make_test_token_case ("ESC /",    "\e/")
+	)).run_rc());
 	BT_SUCCESS;
 }
 
@@ -146,12 +150,19 @@ BT_SCENARIO_TEST (test_token_csi_simple) {
 		make_test_token_case ("CSI DEL A",   "\e[\x7f""A", Token {Token::Type::CSI, 'A'}),
 		make_test_token_case ("ESC DEL [ A", "\e\x7f[A",   Token {Token::Type::CSI, 'A'}),
 		make_test_token_case ("ESC CSI A",   "\e\e[A",     Token {Token::Type::CSI, 'A'}),
+		make_test_token_case ("CSI CSI A",   "\e[\e[A",    Token {Token::Type::CSI, 'A'}),
 		make_test_token_case ("CSI A CSI B", "\e[A\e[B",   Token {Token::Type::CSI, 'A'}, Token {Token::Type::CSI, 'B'}),
 		make_test_token_case ("CSI 1 CSI B", "\e[1\e[B",   Token {Token::Type::CSI, 'B'})
 	)).run_rc());
-	BT_ASSERT_RC (Suite ("CSI simple flush", cases <input_as_constref<tokenize<Mode::STRICT, true>>> (
+	BT_ASSERT_RC (Suite ("CSI simple flush (strict)", cases <input_as_constref<tokenize<Mode::STRICT, true>>> (
 		make_test_token_case ("CSI",         "\e["),
-		make_test_token_case ("CSI A ESC",   "\e[A\e",     Token {Token::Type::CSI, 'A'}, Token {Token::Type::ESC})
+		make_test_token_case ("CSI A ESC",   "\e[A\e",     Token {Token::Type::CSI, 'A'}, Token {Token::Type::ESC}),
+		make_test_token_case ("CSI A CSI",   "\e[A\e[",    Token {Token::Type::CSI, 'A'})
+	)).run_rc());
+	BT_ASSERT_RC (Suite ("CSI simple flush (input)", cases <input_as_constref<tokenize<Mode::INPUT, true>>> (
+		make_test_token_case ("CSI",         "\e[",        Token {Token::Type::ESC, '['}),
+		make_test_token_case ("CSI A ESC",   "\e[A\e",     Token {Token::Type::CSI, 'A'}, Token {Token::Type::ESC}),
+		make_test_token_case ("CSI A CSI",   "\e[A\e[",    Token {Token::Type::CSI, 'A'}, Token {Token::Type::ESC, '['})
 	)).run_rc());
 	BT_SUCCESS;
 }
@@ -198,25 +209,38 @@ BT_SCENARIO_TEST (test_token_csi_inter) {
 
 BT_SCENARIO_TEST (test_token_ss3) {
 	BT_ASSERT_RC (Suite ("SS3", cases <input_as_constref<tokenize<Mode::STRICT>>> (
-		make_test_token_case ("SS3", "\eO"),
-		make_test_token_case ("SS3 A", "\eOA", Token {Token::Type::SS3, 'A'}),
-		make_test_token_case ("SS3 B", "\eOB", Token {Token::Type::SS3, 'B'}),
-		make_test_token_case ("SS3 R", "\eOR", Token {Token::Type::SS3, 'R'}),
-		make_test_token_case ("SS3 S", "\eOS", Token {Token::Type::SS3, 'S'})
+		make_test_token_case ("SS3",       "\eO"),
+		make_test_token_case ("SS3 A",     "\eOA",    Token {Token::Type::SS3, 'A'}),
+		make_test_token_case ("SS3 B",     "\eOB",    Token {Token::Type::SS3, 'B'}),
+		make_test_token_case ("SS3 R",     "\eOR",    Token {Token::Type::SS3, 'R'}),
+		make_test_token_case ("SS3 S",     "\eOS",    Token {Token::Type::SS3, 'S'}),
+		make_test_token_case ("SS3 SS3 P", "\eO\eOP", Token {Token::Type::SS3, 'P'})
 	)).run_rc());
-	BT_ASSERT_RC (Suite ("SS3 flush", cases <input_as_constref<tokenize<Mode::STRICT, true>>> (
-		make_test_token_case ("SS3", "\eO")
+	BT_ASSERT_RC (Suite ("SS3 flush (strict)", cases <input_as_constref<tokenize<Mode::STRICT, true>>> (
+		make_test_token_case ("SS3",       "\eO"),
+		make_test_token_case ("SS3 P SS3", "\eOP\eO", Token {Token::Type::SS3, 'P'})
+	)).run_rc());
+	BT_ASSERT_RC (Suite ("SS3 flush (input)", cases <input_as_constref<tokenize<Mode::INPUT, true>>> (
+		make_test_token_case ("SS3",       "\eO",     Token {Token::Type::ESC, 'O'}),
+		make_test_token_case ("SS3 P SS3", "\eOP\eO", Token {Token::Type::SS3, 'P'}, Token {Token::Type::ESC, 'O'})
 	)).run_rc());
 	BT_SUCCESS;
 }
 
 BT_SCENARIO_TEST (test_token_mix) {
-	BT_ASSERT_RC (Suite ("Mixed", cases <input_as_constref<tokenize<Mode::STRICT>>> (
-		make_test_token_case ("a CSI 1;5A CR", "a\e[1;5A\r",
-			Token {Token::Type::PRINT, 'a'},
-			Token {Token::Type::CSI, 'A', {1, 5}},
-			Token {Token::Type::EXEC, '\r'}
-		)
+	BT_ASSERT_RC (Suite ("Mixed (strict)", cases <input_as_constref<tokenize<Mode::STRICT>>> (
+		make_test_token_case ("a CSI 1;5A CR", "a\e[1;5A\r", Token {Token::Type::PRINT, 'a'}, Token {Token::Type::CSI, 'A', {1, 5}}, Token {Token::Type::EXEC, '\r'}),
+		make_test_token_case ("a ESC / b",     "a\e/b",      Token {Token::Type::PRINT, 'a'}, Token {Token::Type::ESC, 'b', {}, 0, {'/'}}),
+		//make_test_token_case ("ESC SP CR",     "\e \r",      Token {Token::Type::ESC, ' '},   Token {Token::Type::EXEC, '\r'}),
+		make_test_token_case ("CSI A ESC /",   "\e[A\e/",    Token {Token::Type::CSI, 'A'}),
+		make_test_token_case ("SS3 P CSI 24~", "\eOP\e[24~", Token {Token::Type::SS3, 'P'},   Token {Token::Type::CSI, '~', {24}})
+	)).run_rc());
+	BT_ASSERT_RC (Suite ("Mixed (input)", cases <input_as_constref<tokenize<Mode::INPUT>>> (
+		make_test_token_case ("a CSI 1;5A CR", "a\e[1;5A\r", Token {Token::Type::PRINT, 'a'}, Token {Token::Type::CSI, 'A', {1, 5}}, Token {Token::Type::EXEC, '\r'}),
+		make_test_token_case ("a ESC / b",     "a\e/b",      Token {Token::Type::PRINT, 'a'}, Token {Token::Type::ESC, '/'},         Token {Token::Type::PRINT, 'b'}),
+		make_test_token_case ("ESC SP CR",     "\e \r",      Token {Token::Type::ESC, ' '},   Token {Token::Type::EXEC, '\r'}),
+		make_test_token_case ("CSI A ESC /",   "\e[A\e/",    Token {Token::Type::CSI, 'A'},   Token {Token::Type::ESC, '/'}),
+		make_test_token_case ("SS3 P CSI 24~", "\eOP\e[24~", Token {Token::Type::SS3, 'P'},   Token {Token::Type::CSI, '~', {24}})
 	)).run_rc());
 	BT_SUCCESS;
 }
