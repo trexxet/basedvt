@@ -18,14 +18,7 @@ public:
 	void feed (uint8_t c);
 	std::vector<Token> feed_string (std::string_view str);
 
-	OptToken get () noexcept {
-		if (ctx.ready) {
-			Token token = std::move(*ctx.ready);
-			reset();
-			return token;
-		}
-		else return std::nullopt;
-	}
+	OptToken get () noexcept { return ctx.take_ready(); }
 
 	void switch_mode (Mode mode) noexcept {
 		ctx.mode = mode;

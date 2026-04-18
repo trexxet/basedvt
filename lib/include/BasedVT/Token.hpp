@@ -54,10 +54,11 @@ struct TokenStage {
 			token.intermediates.emplace_back (static_cast<char> (currByte));
 	}
 
+	void commit_private () noexcept { token.privateMark = currByte; }
 	void commit_ch () noexcept { token.ch = currByte; }
 	void set_type (Token::Type type) noexcept { token.type = type; }
 
-	Token&& ready () { return std::move (token); }
+	Token ready () { return std::move (token); }
 };
 
 }

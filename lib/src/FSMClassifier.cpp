@@ -79,8 +79,11 @@ constexpr std::array classifiers = {
 
 OptEvent classify_byte (uint8_t b, FSMDetail::States state) {
 	switch (b) {
-		case 0x00 ... 0x1A:
+		case 0x00 ... 0x17:
+		case 0x19:
 		case 0x1C ... 0x1F: return Events::EV_EXECUTE;
+		case 0x18:
+		case 0x1A: return Events::EV_EXECUTE_CANCEL;
 		case 0x1B: return Events::EV_ESC;
 	};
 

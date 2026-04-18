@@ -16,7 +16,7 @@ using namespace FSMDetail;
 inline static void ready (Context* ctx, Token::Type type) {
 	ctx->stage.commit_ch();
 	ctx->stage.set_type (type);
-	ctx->ready = ctx->stage.ready();
+	ctx->ready = std::move (ctx->stage.ready());
 
 #ifdef BASEDVT_DEBUG
 	std::print ("Token: {}\n", ctx->ready->to_string());
@@ -28,7 +28,16 @@ void print (Context* ctx) {
 }
 
 void execute (Context* ctx) {
-	ready (ctx, Token::Type::EXEC);
+	const uint8_t b = ctx->stage.currByte;
+
+	ctx->ready.emplace (Token::Type::EXEC, ctx->stage.currByte);
+
+	if (b == 0x18 || b == 0x1A)
+		ctx->stage = {};
+
+#ifdef BASEDVT_DEBUG
+	std::print ("Token: {}\n", ctx->ready->to_string());
+#endif
 }
 
 void clear (Context* ctx) {
@@ -40,7 +49,7 @@ void collect (Context* ctx) {
 	const uint8_t b = ctx->stage.currByte;
 
 	if (b >= '>' && b <= '?') {
-		ctx->stage.token.privateMark = b;
+		ctx->stage.commit_private();
 		return;
 	}
 
