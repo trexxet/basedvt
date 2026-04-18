@@ -17,6 +17,7 @@ set(basedvt_SOURCES
 	Decode.cpp
 	FSMActions.cpp
 	FSMCallbacks.cpp
+	FSMClassifier.cpp
 	Tokenizer.cpp
 )
 list(TRANSFORM basedvt_SOURCES PREPEND src/)
