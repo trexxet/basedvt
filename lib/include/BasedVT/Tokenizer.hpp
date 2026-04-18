@@ -20,7 +20,7 @@ public:
 
 	OptToken get () noexcept {
 		if (ctx.ready) {
-			Token token = ctx.token;
+			Token token = std::move(*ctx.ready);
 			reset();
 			return token;
 		}

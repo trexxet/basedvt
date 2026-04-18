@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <optional>
 
 #include "Basedlib/Core/FSM.hpp"
 #include "Token.hpp"
@@ -19,10 +20,8 @@ enum class Mode {
 
 struct Context {
 	Mode mode;
-	uint8_t currByte = 0;
-	int currParam = -1;
-	Token token = {};
-	bool ready = false;
+	TokenStage stage;
+	OptToken ready;
 };
 
 enum class States {
@@ -50,6 +49,8 @@ enum class Events {
 	EV_CSI_ENTRY,    // 0x5B '[' in ST_ESC
 	EV_SS3_ENTRY     // 0x4F 'O' in ST_ESC
 };
+
+using OptEvent = std::optional <Events>;
 
 using FSM = Basedlib::FSM::FSM <Basedlib::FSM::Enum<States>, Basedlib::FSM::Enum<Events>, Context
 #ifdef BASEDVT_DEBUG

@@ -15,7 +15,7 @@ using namespace FSMDetail;
 
 void Tokenizer::feed (uint8_t c) {
 	if (OptEvent ev = classify_byte (c, fsm.state())) {
-		ctx.currByte = c;
+		ctx.stage.currByte = c;
 		fsm.event (ev.value());
 	}
 }

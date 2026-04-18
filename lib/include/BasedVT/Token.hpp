@@ -24,17 +24,6 @@ struct Token {
 	uint8_t privateMark = 0;
 	Basedlib::StaticVector<char, 4> intermediates = {};
 
-	void add_param (int* param) noexcept {
-		if (!params.full())
-			params.emplace_back ((*param < 0) ? 0 : *param);
-		*param = -1;
-	}
-
-	void add_intermediate (char intermediate) {
-		if (!intermediates.full())
-			intermediates.emplace_back (intermediate);
-	}
-
 #ifdef BASEDVT_DEBUG
 	std::string to_string() const noexcept;
 #endif
@@ -43,5 +32,32 @@ struct Token {
 };
 
 using OptToken = std::optional<Token>;
+
+struct TokenStage {
+	uint8_t currByte = 0;
+	int currParam = -1;
+	Token token = {};
+
+	void append_param () noexcept {
+		if (currParam < 0) currParam = 0;
+		currParam = currParam * 10 + (currByte - '0');
+	}
+
+	void commit_param () noexcept {
+		if (!token.params.full())
+			token.params.emplace_back ((currParam < 0) ? 0 : currParam);
+		currParam = -1;
+	}
+
+	void commit_intermediate () noexcept {
+		if (!token.intermediates.full())
+			token.intermediates.emplace_back (static_cast<char> (currByte));
+	}
+
+	void commit_ch () noexcept { token.ch = currByte; }
+	void set_type (Token::Type type) noexcept { token.type = type; }
+
+	Token&& ready () { return std::move (token); }
+};
 
 }

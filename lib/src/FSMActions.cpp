@@ -14,12 +14,12 @@ namespace BasedVT {
 using namespace FSMDetail;
 
 inline static void ready (Context* ctx, Token::Type type) {
-	ctx->token.type = type;
-	ctx->token.ch = ctx->currByte;
-	ctx->ready = true;
+	ctx->stage.commit_ch();
+	ctx->stage.set_type (type);
+	ctx->ready = ctx->stage.ready();
 
 #ifdef BASEDVT_DEBUG
-	std::print ("Token: {}\n", ctx->token.to_string());
+	std::print ("Token: {}\n", ctx->ready->to_string());
 #endif
 }
 
@@ -32,31 +32,30 @@ void execute (Context* ctx) {
 }
 
 void clear (Context* ctx) {
-	Mode modeSave = ctx->mode;
-	*ctx = {.mode = modeSave};
+	ctx->stage = {};
+	ctx->ready = {};
 }
 
 void collect (Context* ctx) {
-	const uint8_t b = ctx->currByte;
+	const uint8_t b = ctx->stage.currByte;
 
 	if (b >= '>' && b <= '?') {
-		ctx->token.privateMark = b;
+		ctx->stage.token.privateMark = b;
 		return;
 	}
 
-	ctx->token.add_intermediate (static_cast<char> (b));
+	ctx->stage.commit_intermediate();
 }
 
 void param (Context* ctx) {
-	const uint8_t b = ctx->currByte;
+	const uint8_t b = ctx->stage.currByte;
 
 	if (b == ';') {
-		ctx->token.add_param (&ctx->currParam);
+		ctx->stage.commit_param();
 		return;
 	}
 
-	if (ctx->currParam < 0) ctx->currParam = 0;
-	ctx->currParam = ctx->currParam * 10 + (b - '0');
+	ctx->stage.append_param();
 }
 
 void esc_dispatch (Context* ctx) {
@@ -64,8 +63,8 @@ void esc_dispatch (Context* ctx) {
 }
 
 void csi_dispatch (Context* ctx) {
-	if (ctx->currParam >= 0)
-		ctx->token.add_param (&ctx->currParam);
+	if (ctx->stage.currParam >= 0)
+		ctx->stage.commit_param();
 
 	ready (ctx, Token::Type::CSI);
 }
