@@ -1,7 +1,9 @@
 #pragma once
 
 #include <cstdint>
+#include <limits>
 #include <optional>
+#include <utility>
 
 #include "Basedlib/Class.hpp"
 #include "Basedlib/Container/StaticVector.hpp"
@@ -44,7 +46,8 @@ struct TokenStage {
 
 	void append_param () noexcept {
 		if (currParam < 0) currParam = 0;
-		currParam = currParam * 10 + (currByte - '0');
+		if (currParam < std::numeric_limits<int16_t>::max())
+			currParam = currParam * 10 + (currByte - '0');
 	}
 
 	void commit_param () noexcept {
@@ -62,7 +65,9 @@ struct TokenStage {
 	void commit_ch () noexcept { token.ch = currByte; }
 	void set_type (Token::Type type) noexcept { token.type = type; }
 
-	Token ready () { return std::move (token); }
+	Token ready () noexcept {
+		return std::exchange (token, {});
+	}
 };
 
 }
