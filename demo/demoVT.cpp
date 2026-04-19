@@ -62,14 +62,22 @@ void print_decoded_key (const BasedVT::KeyInput& key) {
 	std::print ("{}\n", str);
 }
 
-void decode (BasedVT::Parser& parser, std::span<uint8_t> buf, BasedVT::Tokenizer::Mode mode) {
+using Mode = BasedVT::Tokenizer::Mode;
+
+bool needs_flush (std::span<uint8_t> buf, uint8_t currByte, Mode mode) {
+	return (buf.size() == 1 && buf[0] == '\e') // single ESC
+	    || (buf.size() == 2 && buf[0] == '\e' && currByte == '[' && mode == Mode::INPUT)  // CSI entry
+	    || (buf.size() == 2 && buf[0] == '\e' && currByte == 'O' && mode == Mode::INPUT); // SS3 entry
+}
+
+void decode (BasedVT::Parser& parser, std::span<uint8_t> buf, Mode mode) {
 	bool decodedAny = false;
 	parser.switch_mode (mode);
-	std::print ("Mode {}: ", Basedlib::PrettyEnum<BasedVT::Tokenizer::Mode>::to_string (mode));
+	std::print ("Mode {}: ", Basedlib::PrettyEnum<Mode>::to_string (mode));
 
 	for (uint8_t b : buf) {
 		parser.feed (b);
-		auto key = (buf.size() == 1 && b == '\e') ? parser.flush() : parser.get();
+		auto key = needs_flush (buf, b, mode) ? parser.flush() : parser.get();
 		if (key) {
 			print_decoded_key (*key);
 			decodedAny = true;
@@ -90,9 +98,9 @@ int main () {
 	uint8_t buf[64];
 	ssize_t n = read_input (buf);
 
-	BasedVT::Parser parser (BasedVT::Tokenizer::Mode::INPUT);
-	decode (parser, std::span (buf, n), BasedVT::Tokenizer::Mode::INPUT);
-	decode (parser, std::span (buf, n), BasedVT::Tokenizer::Mode::STRICT);
+	BasedVT::Parser parser (Mode::INPUT);
+	decode (parser, std::span (buf, n), Mode::INPUT);
+	decode (parser, std::span (buf, n), Mode::STRICT);
 
 #ifdef __WIN32
 	unconf_term (ct);
