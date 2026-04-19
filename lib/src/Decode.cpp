@@ -159,14 +159,22 @@ constexpr std::array decoder = {
 	decode_ss3
 };
 
-OptKeyInput decode (const Token& t) {
-	OptKeyInput decoded = decoder[Token::PrettyType::idx(t.type)] (t);
+inline static void print_decoded (const Token& t, const OptKeyInput& decoded) {
 #ifdef BASEDVT_ENABLE_LOG
 	std::print ("Decode {}: {}\n",
 		Token::PrettyType::to_string(t.type),
+	#ifdef BASEDVT_ENABLE_TO_STRING
 		decoded ? decoded->to_string() : "none"
+	#else
+		"<no printer>"
+	#endif
 	);
 #endif
+};
+
+OptKeyInput decode (const Token& t) {
+	OptKeyInput decoded = decoder[Token::PrettyType::idx(t.type)] (t);
+	print_decoded (t, decoded);
 	return decoded;
 }
 

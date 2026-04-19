@@ -20,7 +20,7 @@ using namespace BasedVT;
 using Tokens = Basedlib::StaticVector<Token, 8>;
 using Mode = Tokenizer::Mode;
 
-#ifdef BASEDVT_DEBUG
+#ifdef BASEDVT_ENABLE_TO_STRING
 namespace Basedlib {
 std::string to_string (const Tokens& tokens) {
 	if (tokens.empty()) return {"[empty]"};

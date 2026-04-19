@@ -4,6 +4,7 @@ project(basedvt VERSION 0.1)
 option(BASEDVT_BUILD_TESTS "Build basedvt tests" OFF)
 option(BASEDVT_BUILD_DEMOS "Build basedvt demos" OFF)
 option(BASEDVT_ENABLE_LOG "Enable debug logging" OFF)
+option(BASEDVT_ENABLE_TO_STRING "Enable to_string() methods" ${PROJECT_IS_TOP_LEVEL})
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin")
 set(CMAKE_CXX_STANDARD 23)

@@ -5,7 +5,7 @@
 #include "Basedlib/Class.hpp"
 #include "Basedlib/Meta/PrettyEnum.hpp"
 
-#ifdef BASEDVT_DEBUG
+#ifdef BASEDVT_ENABLE_TO_STRING
 #include <format>
 #include <string>
 #include <string_view>
@@ -41,7 +41,7 @@ struct KeyInput {
 	bool alt = false;
 	bool shift = false;
 
-#ifdef BASEDVT_DEBUG
+#ifdef BASEDVT_ENABLE_TO_STRING
 	std::string to_string() const noexcept {
 		std::string str = std::format ("Key: {} ch: {}", PrettyKey::to_string (key), static_cast<int> (ch));
 		if (ctrl) str.append (" ctrl");
@@ -56,7 +56,7 @@ struct KeyInput {
 
 using OptKeyInput = std::optional<KeyInput>;
 
-#ifdef BASEDVT_DEBUG
+#ifdef BASEDVT_ENABLE_TO_STRING
 inline std::string_view to_string (KeyInput::Key k) {
 	return KeyInput::PrettyKey::to_string (k);
 }

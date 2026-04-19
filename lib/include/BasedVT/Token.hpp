@@ -7,7 +7,7 @@
 #include "Basedlib/Container/StaticVector.hpp"
 #include "Basedlib/Meta/PrettyEnum.hpp"
 
-#ifdef BASEDVT_DEBUG
+#ifdef BASEDVT_ENABLE_TO_STRING
 #include <string>
 #endif
 
@@ -28,7 +28,7 @@ struct Token {
 	uint8_t privateMark = 0;
 	Basedlib::StaticVector<char, 4> intermediates = {};
 
-#ifdef BASEDVT_DEBUG
+#ifdef BASEDVT_ENABLE_TO_STRING
 	std::string to_string() const noexcept;
 #endif
 

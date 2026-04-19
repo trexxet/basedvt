@@ -4,7 +4,7 @@
 #include "FSMCallbacks.hpp"
 #include "FSMClassifier.hpp"
 
-#ifdef BASEDVT_DEBUG
+#ifdef BASEDVT_ENABLE_TO_STRING
 #include <format>
 #endif
 
@@ -33,7 +33,7 @@ Tokenizer::Tokenizer (Mode mode) : fsm (States::ST_GROUND, &ctx, make_callbacks 
 	switch_mode (mode);
 }
 
-#ifdef BASEDVT_DEBUG
+#ifdef BASEDVT_ENABLE_TO_STRING
 std::string Token::to_string() const noexcept {
 	return std::format ("Type: {} ch: {} params: {} inter: {} private: {}",
 		PrettyType::to_string (type),

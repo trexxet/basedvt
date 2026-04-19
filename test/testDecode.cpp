@@ -7,7 +7,7 @@ using namespace Basedtest;
 using namespace BasedVT;
 
 namespace BasedVT {
-#ifdef BASEDVT_DEBUG
+#ifdef BASEDVT_ENABLE_TO_STRING
 std::string to_string (const OptKeyInput& optkey) {
 	if (!optkey) return "none";
 	return optkey->to_string();

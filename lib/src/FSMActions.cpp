@@ -13,14 +13,24 @@ namespace BasedVT {
 
 using namespace FSMDetail;
 
+inline static void print_token (const OptToken& token) {
+#ifdef BASEDVT_ENABLE_LOG
+	std::print ("Token: {}\n",
+	#ifdef BASEDVT_ENABLE_TO_STRING
+		token->to_string()
+	#else
+		"<no printer>"
+	#endif
+	);
+#endif
+}
+
 inline static void ready (Context* ctx, Token::Type type) {
 	ctx->stage.commit_ch();
 	ctx->stage.set_type (type);
 	ctx->ready = std::move (ctx->stage.ready());
 
-#ifdef BASEDVT_ENABLE_LOG
-	std::print ("Token: {}\n", ctx->ready->to_string());
-#endif
+	print_token (ctx->ready);
 }
 
 void print (Context* ctx) {
@@ -35,9 +45,7 @@ void execute (Context* ctx) {
 	if (b == 0x18 || b == 0x1A)
 		ctx->stage = {};
 
-#ifdef BASEDVT_ENABLE_LOG
-	std::print ("Token: {}\n", ctx->ready->to_string());
-#endif
+	print_token (ctx->ready);
 }
 
 void clear (Context* ctx) {

@@ -9,9 +9,9 @@ set_target_properties(basedvt PROPERTIES
 	VERSION 0.1
 	DEBUG_POSTFIX "dbg"
 )
-target_compile_definitions(basedvt PRIVATE
-	$<$<CONFIG:Debug>:BASEDVT_DEBUG>
-	$<$<BOOL:${BASEDVT_ENABLE_LOG}>:BASEDVT_ENABLE_LOG>
+target_compile_definitions(basedvt
+	PRIVATE $<$<BOOL:${BASEDVT_ENABLE_LOG}>:BASEDVT_ENABLE_LOG>
+	PUBLIC  $<$<BOOL:${BASEDVT_ENABLE_TO_STRING}>:BASEDVT_ENABLE_TO_STRING>
 )
 
 set(basedvt_SOURCES
