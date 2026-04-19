@@ -7,6 +7,10 @@
 #include "Basedlib/Container/StaticVector.hpp"
 #include "Basedlib/Meta/PrettyEnum.hpp"
 
+#ifdef BASEDVT_DEBUG
+#include <string>
+#endif
+
 namespace BasedVT {
 
 struct Token {

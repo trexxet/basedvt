@@ -11,6 +11,7 @@ set_target_properties(basedvt PROPERTIES
 )
 target_compile_definitions(basedvt PRIVATE
 	$<$<CONFIG:Debug>:BASEDVT_DEBUG>
+	$<$<BOOL:${BASEDVT_ENABLE_LOG}>:BASEDVT_ENABLE_LOG>
 )
 
 set(basedvt_SOURCES

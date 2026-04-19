@@ -6,7 +6,7 @@
 #include "Basedlib/Core/FSM.hpp"
 #include "Token.hpp"
 
-#ifdef BASEDVT_DEBUG
+#ifdef BASEDVT_ENABLE_LOG
 #include <print>
 #include <string_view>
 #endif
@@ -56,7 +56,7 @@ enum class Events {
 using OptEvent = std::optional <Events>;
 
 using FSM = Basedlib::FSM::FSM <Basedlib::FSM::Enum<States>, Basedlib::FSM::Enum<Events>, Context
-#ifdef BASEDVT_DEBUG
+#ifdef BASEDVT_ENABLE_LOG
 	, [] (std::string_view s) { std::print ("FSM Logger: {}\n", s); }
 #endif
 >;

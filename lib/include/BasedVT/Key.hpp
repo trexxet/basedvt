@@ -8,6 +8,7 @@
 #ifdef BASEDVT_DEBUG
 #include <format>
 #include <string>
+#include <string_view>
 #endif
 
 namespace BasedVT {

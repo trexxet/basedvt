@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.30)
 project(basedvt VERSION 0.1)
 
-enable_testing()
 option(BASEDVT_BUILD_TESTS "Build basedvt tests" OFF)
 option(BASEDVT_BUILD_DEMOS "Build basedvt demos" OFF)
+option(BASEDVT_ENABLE_LOG "Enable debug logging" OFF)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin")
 set(CMAKE_CXX_STANDARD 23)
@@ -12,6 +12,7 @@ set(CMAKE_CXX_SCAN_FOR_MODULES FALSE)
 add_subdirectory(lib)
 
 if(BASEDVT_BUILD_TESTS)
+	enable_testing()
 	add_subdirectory(test)
 endif()
 

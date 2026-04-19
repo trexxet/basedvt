@@ -2,7 +2,7 @@
 
 #include <array>
 
-#ifdef BASEDVT_DEBUG
+#ifdef BASEDVT_ENABLE_LOG
 #include <print>
 #endif
 
@@ -161,7 +161,7 @@ constexpr std::array decoder = {
 
 OptKeyInput decode (const Token& t) {
 	OptKeyInput decoded = decoder[Token::PrettyType::idx(t.type)] (t);
-#ifdef BASEDVT_DEBUG
+#ifdef BASEDVT_ENABLE_LOG
 	std::print ("Decode {}: {}\n",
 		Token::PrettyType::to_string(t.type),
 		decoded ? decoded->to_string() : "none"

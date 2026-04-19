@@ -5,7 +5,7 @@
 #include "Basedlib/Meta/PrettyEnum.hpp"
 #include "BasedVT/Token.hpp"
 
-#ifdef BASEDVT_DEBUG
+#ifdef BASEDVT_ENABLE_LOG
 #include <print>
 #endif
 
@@ -18,7 +18,7 @@ inline static void ready (Context* ctx, Token::Type type) {
 	ctx->stage.set_type (type);
 	ctx->ready = std::move (ctx->stage.ready());
 
-#ifdef BASEDVT_DEBUG
+#ifdef BASEDVT_ENABLE_LOG
 	std::print ("Token: {}\n", ctx->ready->to_string());
 #endif
 }
@@ -35,7 +35,7 @@ void execute (Context* ctx) {
 	if (b == 0x18 || b == 0x1A)
 		ctx->stage = {};
 
-#ifdef BASEDVT_DEBUG
+#ifdef BASEDVT_ENABLE_LOG
 	std::print ("Token: {}\n", ctx->ready->to_string());
 #endif
 }
@@ -96,7 +96,7 @@ constexpr std::array actions = {
 };
 
 void action (Actions ac, Context* ctx) {
-#ifdef BASEDVT_DEBUG
+#ifdef BASEDVT_ENABLE_LOG
 	std::print ("Action: {}\n", PrettyActions::to_string(ac));
 #endif
 	actions[PrettyActions::idx(ac)] (ctx);
