@@ -4,6 +4,6 @@
 
 namespace BasedVT {
 
-FSMDetail::OptEvent classify_byte (uint8_t b, FSMDetail::States state);
+FSMDetail::OptEvent classify_byte (uint8_t b, FSMDetail::Mode mode, FSMDetail::States state);
 
 }

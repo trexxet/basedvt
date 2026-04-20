@@ -9,61 +9,93 @@
 #define CSI_ENTRY 0x5B
 #define DEL 0x7F
 
+#define RANGE_PRINTABLE    0x20 ... 0x7E
+#define RANGE_INTERMEDIATE 0x20 ... 0x2F
+#define RANGE_HIGH_ASCII   0x80 ... 0xFF
+
 namespace BasedVT {
 
 using namespace FSMDetail;
 
-inline bool in_printable_range (uint8_t b) {
-	return (b >= 0x20 && b <= 0x7E);
-}
-
-inline bool in_intermediate_range (uint8_t b) {
-	return (b >= 0x20 && b <= 0x2F);
-}
-
-OptEvent classifier_ground (uint8_t b) {
-	if (in_printable_range (b)) [[likely]]
-		return Events::EV_PRINTABLE;
-	if (b == DEL)
-		return Events::EV_EXECUTE;
-	return std::nullopt;
-}
-
-OptEvent classifier_esc (uint8_t b) {
-	if (b == CSI_ENTRY) [[likely]]
-		return Events::EV_CSI_ENTRY;
-	if (b == SS3_ENTRY)
-		return Events::EV_SS3_ENTRY;
-	if (in_intermediate_range (b))
-		return Events::EV_INTERMEDIATE;
-	if (in_printable_range (b))
-		return Events::EV_FINAL;
-	return std::nullopt;
-}
-
-OptEvent classifier_esc_inter (uint8_t b) {
-	if (in_intermediate_range (b))
-		return Events::EV_INTERMEDIATE;
-	if (in_printable_range (b))
-		return Events::EV_FINAL;
-	return std::nullopt;
-}
-
-OptEvent classifier_csi (uint8_t b) {
+OptEvent classify_c0 (uint8_t b) noexcept {
 	switch (b) {
-		case 0x20 ... 0x2F: return Events::EV_INTERMEDIATE;
-		case 0x30 ... 0x39:
-		case 0x3B:          return Events::EV_PARAM;
-		case 0x3A:          return Events::EV_COLON;
-		case 0x3C ... 0x3F: return Events::EV_PRIVATE;
-		case 0x40 ... 0x7E: return Events::EV_FINAL;
+		case 0x00 ... 0x17:
+		case 0x19:
+		case 0x1C ... 0x1F: return Events::EV_EXECUTE;
+		case 0x18:
+		case 0x1A:          return Events::EV_EXECUTE_CANCEL;
+		case 0x1B:          return Events::EV_ESC;
+	}
+	return std::nullopt;
+}
+
+OptEvent classify_c1_strict (uint8_t b) noexcept {
+	switch (b) {
+		case 0x80 ... 0x8F:
+		case 0x91 ... 0x97:
+		case 0x99:
+		case 0x9A: return Events::EV_EXECUTE_CANCEL;
+		// 0x90: DCS
+		// 0x98: SOS
+		// 0x9B: CSI
+		// 0x9C: ST
+		// 0x9D: OSC
+		// 0x9E: PM
+		// 0x9F: APC
+	}
+	return std::nullopt;
+}
+
+OptEvent classifier_ground (uint8_t b) noexcept {
+	switch (b) {
+		case RANGE_HIGH_ASCII:
+		[[likely]]
+		case RANGE_PRINTABLE: return Events::EV_PRINTABLE;
+		case DEL:             return Events::EV_EXECUTE;
+	}
+	return std::nullopt;
+}
+
+OptEvent classifier_esc (uint8_t b) noexcept {
+	switch (b) {
+		[[likely]]
+		case CSI_ENTRY:          return Events::EV_CSI_ENTRY;
+		case SS3_ENTRY:          return Events::EV_SS3_ENTRY;
+		case RANGE_INTERMEDIATE: return Events::EV_INTERMEDIATE;
+	};
+	switch (b) {
+		case RANGE_PRINTABLE:    return Events::EV_FINAL;
 	};
 	return std::nullopt;
 }
 
-OptEvent classifier_ss3 (uint8_t b) {
-	if (in_printable_range (b)) [[likely]]
-		return Events::EV_FINAL;
+OptEvent classifier_esc_inter (uint8_t b) noexcept {
+	switch (b) {
+		case RANGE_INTERMEDIATE: return Events::EV_INTERMEDIATE;
+	};
+	switch (b) {
+		case RANGE_PRINTABLE:    return Events::EV_FINAL;
+	};
+	return std::nullopt;
+}
+
+OptEvent classifier_csi (uint8_t b) noexcept {
+	switch (b) {
+		case RANGE_INTERMEDIATE: return Events::EV_INTERMEDIATE;
+		case 0x30 ... 0x39:
+		case 0x3B:               return Events::EV_PARAM;
+		case 0x3A:               return Events::EV_COLON;
+		case 0x3C ... 0x3F:      return Events::EV_PRIVATE;
+		case 0x40 ... 0x7E:      return Events::EV_FINAL;
+	};
+	return std::nullopt;
+}
+
+OptEvent classifier_ss3 (uint8_t b) noexcept {
+	switch (b) {
+		[[likely]]
+		case RANGE_PRINTABLE: return Events::EV_FINAL;
+	};
 	return std::nullopt;
 }
 
@@ -78,15 +110,13 @@ constexpr std::array classifiers = {
 	classifier_ss3
 };
 
-OptEvent classify_byte (uint8_t b, FSMDetail::States state) {
-	switch (b) {
-		case 0x00 ... 0x17:
-		case 0x19:
-		case 0x1C ... 0x1F: return Events::EV_EXECUTE;
-		case 0x18:
-		case 0x1A: return Events::EV_EXECUTE_CANCEL;
-		case 0x1B: return Events::EV_ESC;
-	};
+OptEvent classify_byte (uint8_t b, FSMDetail::Mode mode, FSMDetail::States state) {
+	OptEvent optEvent = classify_c0 (b);
+	if (optEvent) return optEvent;
+	if (mode == FSMDetail::Mode::STRICT) {
+		optEvent = classify_c1_strict (b);
+		if (optEvent) return optEvent;
+	}
 
 	using PrettyState = Basedlib::PrettyEnum<FSMDetail::States>;
 	return classifiers [PrettyState::idx (state)] (b);
