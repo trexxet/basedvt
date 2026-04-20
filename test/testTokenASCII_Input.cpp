@@ -185,7 +185,7 @@ BT_SCENARIO_TEST (test_token_mix) {
 }
 
 int main () {
-	return Suite ("Token", tests (
+	return Suite ("Token ASCII, mode INPUT", tests (
 		BT_SUITE_SCENARIO (test_token_print),
 		BT_SUITE_SCENARIO (test_token_exec),
 		BT_SUITE_SCENARIO (test_token_esc),
