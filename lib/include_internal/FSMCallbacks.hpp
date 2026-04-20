@@ -20,6 +20,8 @@ EventCallback ev_private_cb;
 EventCallback ev_final_cb;
 EventCallback ev_csi_entry_cb;
 EventCallback ev_ss3_entry_cb;
+EventCallback ev_csi_high_cb;
+EventCallback ev_ss3_high_cb;
 
 consteval auto make_callbacks () {
 	using namespace FSMDetail;
@@ -38,6 +40,8 @@ consteval auto make_callbacks () {
 		FSM::event_cb <Events::EV_FINAL>          (ev_final_cb),
 		FSM::event_cb <Events::EV_CSI_ENTRY>      (ev_csi_entry_cb),
 		FSM::event_cb <Events::EV_SS3_ENTRY>      (ev_ss3_entry_cb),
+		FSM::event_cb <Events::EV_CSI_HIGH>       (ev_csi_high_cb),
+		FSM::event_cb <Events::EV_SS3_HIGH>       (ev_ss3_high_cb),
 		FSM::state_cb <States::ST_ESC>            ({.on_enter = do_clear})
 	);
 }

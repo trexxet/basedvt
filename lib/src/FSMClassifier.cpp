@@ -8,6 +8,8 @@
 #define SS3_ENTRY 0x4F
 #define CSI_ENTRY 0x5B
 #define DEL 0x7F
+#define SS3_HIGH 0x8F
+#define CSI_HIGH 0x9B
 
 #define RANGE_PRINTABLE    0x20 ... 0x7E
 #define RANGE_INTERMEDIATE 0x20 ... 0x2F
@@ -31,13 +33,14 @@ OptEvent classify_c0 (uint8_t b) noexcept {
 
 OptEvent classify_c1_strict (uint8_t b) noexcept {
 	switch (b) {
-		case 0x80 ... 0x8F:
+		case 0x80 ... 0x8E:
 		case 0x91 ... 0x97:
 		case 0x99:
-		case 0x9A: return Events::EV_EXECUTE_CANCEL;
+		case 0x9A:     return Events::EV_EXECUTE_CANCEL;
+		case SS3_HIGH: return Events::EV_SS3_HIGH;
 		// 0x90: DCS
 		// 0x98: SOS
-		// 0x9B: CSI
+		case CSI_HIGH: return Events::EV_CSI_HIGH;
 		// 0x9C: ST
 		// 0x9D: OSC
 		// 0x9E: PM

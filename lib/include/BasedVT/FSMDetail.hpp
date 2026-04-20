@@ -49,7 +49,9 @@ enum class Events {
 	EV_PRIVATE,        // 0x3C-0x3F
 	EV_FINAL,          // 0x40-0x7E
 	EV_CSI_ENTRY,      // 0x5B '[' in ST_ESC
-	EV_SS3_ENTRY       // 0x4F 'O' in ST_ESC
+	EV_SS3_ENTRY,      // 0x4F 'O' in ST_ESC
+	EV_CSI_HIGH,       // 0x9B
+	EV_SS3_HIGH        // 0x8F
 };
 
 using OptEvent = std::optional <Events>;

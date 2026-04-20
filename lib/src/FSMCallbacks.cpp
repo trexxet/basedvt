@@ -123,26 +123,6 @@ ECResult ev_private_cb (FSM* fsm, Context* ctx) {
 	return fsm->switch_state (state);
 }
 
-ECResult ev_csi_entry_cb (FSM* fsm, Context* ctx) {
-	States state = fsm->state();
-	switch (state) {
-		case States::ST_ESC:
-			state = States::ST_CSI_ENTRY;
-			break;
-	}
-	return fsm->switch_state (state);
-}
-
-ECResult ev_ss3_entry_cb (FSM* fsm, Context* ctx) {
-	States state = fsm->state();
-	switch (state) {
-		case States::ST_ESC:
-			state = States::ST_SS3;
-			break;
-	}
-	return fsm->switch_state (state);
-}
-
 ECResult ev_final_cb (FSM* fsm, Context* ctx) {
 	States state = fsm->state();
 	switch (state) {
@@ -164,6 +144,40 @@ ECResult ev_final_cb (FSM* fsm, Context* ctx) {
 			break;
 	}
 	return fsm->switch_state (state);
+}
+
+ECResult ev_csi_entry_cb (FSM* fsm, Context* ctx) {
+	States state = fsm->state();
+	switch (state) {
+		case States::ST_ESC:
+			state = States::ST_CSI_ENTRY;
+			break;
+	}
+	return fsm->switch_state (state);
+}
+
+ECResult ev_ss3_entry_cb (FSM* fsm, Context* ctx) {
+	States state = fsm->state();
+	switch (state) {
+		case States::ST_ESC:
+			state = States::ST_SS3;
+			break;
+	}
+	return fsm->switch_state (state);
+}
+
+ECResult ev_csi_high_cb (FSM* fsm, Context* ctx) {
+	ECResult esc = fsm->event (Events::EV_ESC);
+	if (!esc || *esc != States::ST_ESC) [[unlikely]]
+		return FSM::EventNotPermitted;
+	return fsm->event (Events::EV_CSI_ENTRY);
+}
+
+ECResult ev_ss3_high_cb (FSM* fsm, Context* ctx) {
+	ECResult esc = fsm->event (Events::EV_ESC);
+	if (!esc || *esc != States::ST_ESC) [[unlikely]]
+		return FSM::EventNotPermitted;
+	return fsm->event (Events::EV_SS3_ENTRY);
 }
 
 }
