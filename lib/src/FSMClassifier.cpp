@@ -1,6 +1,7 @@
 #include "FSMClassifier.hpp"
 
 #include <array>
+#include <cstdint>
 
 #include "Basedlib/Meta/PrettyEnum.hpp"
 

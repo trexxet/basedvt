@@ -36,7 +36,7 @@ public:
 
 	void switch_mode (Tokenizer::Mode mode) noexcept { tokenizer.switch_mode (mode); }
 
-	Parser (Tokenizer::Mode mode) : tokenizer (mode) { }
+	Parser (Tokenizer::Mode mode = Tokenizer::Mode::INPUT) : tokenizer (mode) { }
 };
 
 

@@ -32,7 +32,7 @@ public:
 
 	void reset () noexcept { fsm.event (FSMDetail::Events::EV_RESET); }
 
-	Tokenizer (Mode mode);
+	Tokenizer (Mode mode = Mode::INPUT);
 };
 
 }

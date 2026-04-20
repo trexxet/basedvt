@@ -98,7 +98,7 @@ int main () {
 	uint8_t buf[64];
 	ssize_t n = read_input (buf);
 
-	BasedVT::Parser parser (Mode::INPUT);
+	BasedVT::Parser parser;
 	decode (parser, std::span (buf, n), Mode::INPUT);
 	decode (parser, std::span (buf, n), Mode::STRICT);
 
