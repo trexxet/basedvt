@@ -11,6 +11,7 @@
 
 // microslop moment
 #ifdef __INTELLISENSE__
+#pragma diag_suppress 109
 #pragma diag_suppress 304
 #pragma diag_suppress 1574
 #pragma diag_suppress 3133
