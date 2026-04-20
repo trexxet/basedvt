@@ -55,7 +55,7 @@ ssize_t read_input (std::span<uint8_t> buf) {
 void print_decoded_key (const BasedVT::KeyInput& key) {
 	std::string str = std::format ("Done: {}", BasedVT::KeyInput::PrettyKey::to_string (key.key));
 	if (key.key == BasedVT::KeyInput::Key::CHAR)
-		str.append (std::isspace (key.ch) ? " whitespace" : std::format(" {}", key.ch));
+		str.append (std::isspace (key.byte) ? " whitespace" : std::format(" {}", static_cast<char> (key.byte)));
 	if (key.ctrl) str.append (" ctrl");
 	if (key.alt) str.append (" alt");
 	if (key.shift) str.append (" shift");

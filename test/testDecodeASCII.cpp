@@ -51,9 +51,9 @@ BT_SCENARIO_TEST (test_decode_exec) {
 BT_SCENARIO_TEST (test_decode_esc) {
 	BT_ASSERT_RC (Suite ("ESC", cases <decode> (
 		make_case ("ESCAPE", Token {Token::Type::ESC}, KeyInput {KeyInput::Key::ESCAPE}),
-		make_case ("alt A",  Token {Token::Type::ESC, 'A'},  KeyInput {.key = KeyInput::Key::CHAR, .ch = 'A', .alt = true}),
-		make_case ("alt a",  Token {Token::Type::ESC, 'a'},  KeyInput {.key = KeyInput::Key::CHAR, .ch = 'a', .alt = true}),
-		make_case ("alt 1",  Token {Token::Type::ESC, '1'},  KeyInput {.key = KeyInput::Key::CHAR, .ch = '1', .alt = true})
+		make_case ("alt A",  Token {Token::Type::ESC, 'A'},  KeyInput {.key = KeyInput::Key::CHAR, .byte = 'A', .alt = true}),
+		make_case ("alt a",  Token {Token::Type::ESC, 'a'},  KeyInput {.key = KeyInput::Key::CHAR, .byte = 'a', .alt = true}),
+		make_case ("alt 1",  Token {Token::Type::ESC, '1'},  KeyInput {.key = KeyInput::Key::CHAR, .byte = '1', .alt = true})
 	)).run_rc());
 	BT_SUCCESS;
 }
@@ -115,7 +115,7 @@ struct Mods {
 };
 
 BT_ASSERT_TEST (test_decode_mods_single, Mods, mods) {
-	KeyInput k = {.key = KeyInput::Key::UP, .ch = 'A'};
+	KeyInput k = {.key = KeyInput::Key::UP, .byte = 'A'};
 
 	BT_ASSERT_EQ ((apply_mods (k, mods.code)), mods.ok);
 	BT_ASSERT_EQ (k.ctrl, mods.ctrl);
@@ -123,7 +123,7 @@ BT_ASSERT_TEST (test_decode_mods_single, Mods, mods) {
 	BT_ASSERT_EQ (k.shift, mods.shift);
 
 	BT_ASSERT_EQ (k.key, KeyInput::Key::UP);
-	BT_ASSERT_EQ (k.ch, 'A');
+	BT_ASSERT_EQ (k.byte, 'A');
 
 	BT_SUCCESS;
 }

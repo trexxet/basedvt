@@ -30,23 +30,23 @@ OptKeyInput decode_print (const Token& t) {
 	if (!maybe_plain_key_input (t)) return std::nullopt;
 	return KeyInput {
 		.key = KeyInput::Key::CHAR,
-		.ch = static_cast<char> (t.ch)
+		.byte = t.byte
 	};
 }
 
 OptKeyInput decode_exec (const Token& t) {
 	if (!maybe_plain_key_input (t)) return std::nullopt;
-	switch (t.ch) {
+	switch (t.byte) {
 		case 0x09: return KeyInput { .key = KeyInput::Key::TAB };
 		case 0x0A:
 		case 0x0D: return KeyInput { .key = KeyInput::Key::ENTER };
 		case 0x1B: return KeyInput { .key = KeyInput::Key::ESCAPE };
 		case 0x7F: return KeyInput { .key = KeyInput::Key::BACKSPACE };
 		default:
-			if (t.ch >= 0x01 && t.ch <= 0x1A)
+			if (t.byte >= 0x01 && t.byte <= 0x1A)
 				return KeyInput {
 					.key = KeyInput::Key::CHAR,
-					.ch = static_cast<char> ('a' + (t.ch - 1)),
+					.byte = static_cast<uint8_t> ('a' + (t.byte - 1)),
 					.ctrl = true
 				};
 	}
@@ -55,12 +55,12 @@ OptKeyInput decode_exec (const Token& t) {
 
 OptKeyInput decode_esc (const Token& t) {
 	if (!maybe_plain_key_input (t)) return std::nullopt;
-	if (t.ch == 0)
+	if (t.byte == 0)
 		return KeyInput { .key = KeyInput::Key::ESCAPE };
-	if (t.ch >= 0x20 && t.ch <= 0x7E)
+	if (t.byte >= 0x20 && t.byte <= 0x7E)
 		return KeyInput {
 			.key = KeyInput::Key::CHAR,
-			.ch = static_cast<char> (t.ch),
+			.byte = t.byte,
 			.alt = true
 		};
 	return std::nullopt;
@@ -121,7 +121,7 @@ OptKeyInput decode_csi (const Token& t) {
 	KeyInput k;
 	bool ok = true;
 
-	switch (t.ch) {
+	switch (t.byte) {
 		case 'A': ok = decode_csi_simple (k, t, KeyInput::Key::UP);    break;
 		case 'B': ok = decode_csi_simple (k, t, KeyInput::Key::DOWN);  break;
 		case 'C': ok = decode_csi_simple (k, t, KeyInput::Key::RIGHT); break;
@@ -142,7 +142,7 @@ OptKeyInput decode_csi (const Token& t) {
 
 OptKeyInput decode_ss3 (const Token& t) {
 	if (!maybe_plain_key_input (t)) return std::nullopt;
-	switch (t.ch) {
+	switch (t.byte) {
 		case 'P': return KeyInput { .key = KeyInput::Key::F1 };
 		case 'Q': return KeyInput { .key = KeyInput::Key::F2 };
 		case 'R': return KeyInput { .key = KeyInput::Key::F3 };

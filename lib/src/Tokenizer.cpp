@@ -35,9 +35,8 @@ Tokenizer::Tokenizer (Mode mode) : fsm (States::ST_GROUND, &ctx, make_callbacks 
 
 #ifdef BASEDVT_ENABLE_TO_STRING
 std::string Token::to_string() const noexcept {
-	return std::format ("Type: {} ch: {} params: {} inter: {} private: {}",
-		PrettyType::to_string (type),
-		(int) ch,
+	return std::format ("Type: {} byte: {} params: {} inter: {} private: {}",
+		PrettyType::to_string (type), byte,
 		[this] () -> std::string {
 			if (params.empty()) return "none";
 			std::string str = {};

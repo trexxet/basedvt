@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <optional>
 
 #include "Basedlib/Class.hpp"
@@ -35,7 +36,7 @@ struct KeyInput {
 	} key = Key::NONE;
 	using PrettyKey = Basedlib::PrettyEnum<Key>;
 
-	char ch = 0;
+	uint8_t byte = 0;
 
 	bool ctrl = false;
 	bool alt = false;
@@ -43,7 +44,7 @@ struct KeyInput {
 
 #ifdef BASEDVT_ENABLE_TO_STRING
 	std::string to_string() const noexcept {
-		std::string str = std::format ("Key: {} ch: {}", PrettyKey::to_string (key), static_cast<int> (ch));
+		std::string str = std::format ("Key: {} byte: {}", PrettyKey::to_string (key), byte);
 		if (ctrl) str.append (" ctrl");
 		if (alt) str.append (" alt");
 		if (shift) str.append (" shift");

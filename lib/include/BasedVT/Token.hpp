@@ -25,7 +25,7 @@ struct Token {
 	} type;
 	using PrettyType = Basedlib::PrettyEnum <Type>;
 
-	uint8_t ch = 0;
+	uint8_t byte = 0;
 	Basedlib::StaticVector<int, 16> params = {};
 	uint8_t privateMark = 0;
 	Basedlib::StaticVector<char, 4> intermediates = {};
@@ -62,7 +62,7 @@ struct TokenStage {
 	}
 
 	void commit_private () noexcept { token.privateMark = currByte; }
-	void commit_ch () noexcept { token.ch = currByte; }
+	void commit_ch () noexcept { token.byte = currByte; }
 	void set_type (Token::Type type) noexcept { token.type = type; }
 
 	Token ready () noexcept {
