@@ -38,19 +38,13 @@ void print (Context* ctx) {
 }
 
 void execute (Context* ctx) {
-	const uint8_t b = ctx->stage.currByte;
-
 	ctx->ready.emplace (Token::Type::EXEC, ctx->stage.currByte);
-
-	if (b == 0x18 || b == 0x1A)
-		ctx->stage = {};
 
 	print_token (ctx->ready);
 }
 
 void clear (Context* ctx) {
 	ctx->stage = {};
-	ctx->ready = {};
 }
 
 void collect (Context* ctx) {

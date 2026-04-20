@@ -7,9 +7,9 @@
 
 #define SS3_ENTRY 0x4F
 #define CSI_ENTRY 0x5B
-#define DEL 0x7F
-#define SS3_HIGH 0x8F
-#define CSI_HIGH 0x9B
+#define SS3_HIGH  0x8F
+#define CSI_HIGH  0x9B
+#define DEL       0x7F
 
 #define RANGE_PRINTABLE    0x20 ... 0x7E
 #define RANGE_INTERMEDIATE 0x20 ... 0x2F

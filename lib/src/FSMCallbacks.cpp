@@ -44,6 +44,7 @@ ECResult ev_execute_cb (FSM* fsm, Context* ctx) {
 
 ECResult ev_execute_cancel_cb (FSM* fsm, Context* ctx) {
 	action (Actions::AC_EXECUTE, ctx);
+	action (Actions::AC_CLEAR, ctx);
 	States state = States::ST_GROUND;
 	return fsm->switch_state (state);
 }
