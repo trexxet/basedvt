@@ -38,13 +38,13 @@ OptEvent classify_c1_strict (uint8_t b) noexcept {
 		case 0x99:
 		case 0x9A:     return Events::EV_EXECUTE_CANCEL;
 		case SS3_HIGH: return Events::EV_SS3_HIGH;
-		// 0x90: DCS
-		// 0x98: SOS
 		case CSI_HIGH: return Events::EV_CSI_HIGH;
-		// 0x9C: ST
-		// 0x9D: OSC
-		// 0x9E: PM
-		// 0x9F: APC
+		/* DCS */ case 0x90:
+		/* SOS */ case 0x98:
+		/* ST  */ case 0x9C:
+		/* OSC */ case 0x9D:
+		/* PM  */ case 0x9E:
+		/* APC */ case 0x9F: return Events::EV_IGNORE;
 	}
 	return std::nullopt;
 }
