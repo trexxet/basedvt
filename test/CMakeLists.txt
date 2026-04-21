@@ -12,4 +12,5 @@ add_basedvt_test(bvt_test_token_ascii_strict testTokenASCII_Strict.cpp testToken
 add_basedvt_test(bvt_test_token_ascii_input testTokenASCII_Input.cpp testTokenCommon.cpp)
 add_basedvt_test(bvt_test_token_high_strict testTokenHigh_Strict.cpp testTokenCommon.cpp)
 add_basedvt_test(bvt_test_token_high_input testTokenHigh_Input.cpp testTokenCommon.cpp)
-add_basedvt_test(bvt_test_decode_ascii testDecodeASCII.cpp)
+
+add_basedvt_test(bvt_test_decode_key testDecodeKey.cpp)

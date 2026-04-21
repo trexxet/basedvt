@@ -29,7 +29,8 @@ inline bool maybe_plain_key_input (const Token& t) {
 }
 
 OptKeyInput decode_print (const Token& t) {
-	if (!maybe_plain_key_input (t)) return std::nullopt;
+	if (!maybe_plain_key_input (t)) [[unlikely]] return std::nullopt;
+	if (t.byte == 0x7F) [[unlikely]] return std::nullopt;
 	return KeyInput {
 		.key = KeyInput::Key::CHAR,
 		.byte = t.byte
@@ -37,7 +38,7 @@ OptKeyInput decode_print (const Token& t) {
 }
 
 OptKeyInput decode_exec (const Token& t) {
-	if (!maybe_plain_key_input (t)) return std::nullopt;
+	if (!maybe_plain_key_input (t)) [[unlikely]] return std::nullopt;
 	switch (t.byte) {
 		case 0x09: return KeyInput { .key = KeyInput::Key::TAB };
 		case 0x0A:
@@ -56,10 +57,10 @@ OptKeyInput decode_exec (const Token& t) {
 }
 
 OptKeyInput decode_esc (const Token& t) {
-	if (!maybe_plain_key_input (t)) return std::nullopt;
+	if (!maybe_plain_key_input (t)) [[unlikely]] return std::nullopt;
 	if (t.byte == 0)
 		return KeyInput { .key = KeyInput::Key::ESCAPE };
-	if (t.byte >= 0x20 && t.byte <= 0x7E)
+	if (t.byte >= 0x20 && t.byte <= 0xFF && t.byte != 0x7F)
 		return KeyInput {
 			.key = KeyInput::Key::CHAR,
 			.byte = t.byte,
@@ -75,9 +76,9 @@ inline bool maybe_csi_key_input (const Token& t) {
 }
 
 bool decode_csi_tilde (KeyInput& k, const Token& t) {
-	if (t.params.empty()) return false;
+	if (t.params.empty()) [[unlikely]] return false;
 	if (t.params.size() == 2)
-		if (!apply_mods (k, static_cast<uint8_t> (t.params[1])))
+		if (!apply_mods (k, static_cast<uint8_t> (t.params[1]))) [[unlikely]]
 			return false;
 
 	switch (t.params[0]) {
@@ -108,17 +109,17 @@ bool decode_csi_tilde (KeyInput& k, const Token& t) {
 bool decode_csi_simple (KeyInput& k, const Token& t, KeyInput::Key key) {
 	if (!t.params.empty()) {
 		if (t.params.size() == 2 && t.params[0] == 1) {
-			if (!apply_mods (k, static_cast<uint8_t> (t.params[1])))
+			if (!apply_mods (k, static_cast<uint8_t> (t.params[1]))) [[unlikely]]
 				return false;
 		}
-		else return false;
+		else [[unlikely]] return false;
 	}
 	k.key = key;
 	return true;
 }
 
 OptKeyInput decode_csi (const Token& t) {
-	if (!maybe_csi_key_input (t)) return std::nullopt;
+	if (!maybe_csi_key_input (t)) [[unlikely]] return std::nullopt;
 
 	KeyInput k;
 	bool ok = true;
@@ -130,10 +131,10 @@ OptKeyInput decode_csi (const Token& t) {
 		case 'D': ok = decode_csi_simple (k, t, KeyInput::Key::LEFT);  break;
 		case 'F': ok = decode_csi_simple (k, t, KeyInput::Key::END);   break;
 		case 'H': ok = decode_csi_simple (k, t, KeyInput::Key::HOME);  break;
-		case 'P': ok = decode_csi_simple (k, t, KeyInput::Key::F1); break;
-		case 'Q': ok = decode_csi_simple (k, t, KeyInput::Key::F2);  break;
-		case 'R': ok = decode_csi_simple (k, t, KeyInput::Key::F3);   break;
-		case 'S': ok = decode_csi_simple (k, t, KeyInput::Key::F4);  break;
+		case 'P': ok = decode_csi_simple (k, t, KeyInput::Key::F1);    break;
+		case 'Q': ok = decode_csi_simple (k, t, KeyInput::Key::F2);    break;
+		case 'R': ok = decode_csi_simple (k, t, KeyInput::Key::F3);    break;
+		case 'S': ok = decode_csi_simple (k, t, KeyInput::Key::F4);    break;
 		case '~': ok = decode_csi_tilde (k, t); break;
 		default:  ok = false; break;
 	}
@@ -143,7 +144,7 @@ OptKeyInput decode_csi (const Token& t) {
 }
 
 OptKeyInput decode_ss3 (const Token& t) {
-	if (!maybe_plain_key_input (t)) return std::nullopt;
+	if (!maybe_plain_key_input (t)) [[unlikely]] return std::nullopt;
 	switch (t.byte) {
 		case 'P': return KeyInput { .key = KeyInput::Key::F1 };
 		case 'Q': return KeyInput { .key = KeyInput::Key::F2 };

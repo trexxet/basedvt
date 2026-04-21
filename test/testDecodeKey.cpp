@@ -9,9 +9,11 @@ using namespace BasedVT::InputEvent;
 
 namespace BasedVT {
 #ifdef BASEDVT_ENABLE_TO_STRING
+namespace InputEvent {
 std::string to_string (const OptKeyInput& optkey) {
 	if (!optkey) return "none";
 	return optkey->to_string();
+}
 }
 #endif
 bool apply_mods (KeyInput& k, uint8_t mods);
@@ -27,34 +29,70 @@ constexpr auto make_case (std::string_view name, Token input) {
 
 BT_SCENARIO_TEST (test_decode_char) {
 	BT_ASSERT_RC (Suite ("CHAR", cases <decode> (
+		// ASCII
 		make_case ("a",  Token {Token::Type::PRINT, 'a'}, KeyInput {KeyInput::Key::CHAR, 'a'}),
 		make_case ("A",  Token {Token::Type::PRINT, 'A'}, KeyInput {KeyInput::Key::CHAR, 'A'}),
 		make_case ("z",  Token {Token::Type::PRINT, 'z'}, KeyInput {KeyInput::Key::CHAR, 'z'}),
 		make_case ("0",  Token {Token::Type::PRINT, '0'}, KeyInput {KeyInput::Key::CHAR, '0'}),
 		make_case ("[",  Token {Token::Type::PRINT, '['}, KeyInput {KeyInput::Key::CHAR, '['}),
 		make_case ("~",  Token {Token::Type::PRINT, '~'}, KeyInput {KeyInput::Key::CHAR, '~'}),
-		make_case ("SP", Token {Token::Type::PRINT, ' '}, KeyInput {KeyInput::Key::CHAR, ' '})
+		make_case ("SP", Token {Token::Type::PRINT, ' '}, KeyInput {KeyInput::Key::CHAR, ' '}),
+		// High
+		make_case ("0x80", Token {Token::Type::PRINT, 0x80}, KeyInput {KeyInput::Key::CHAR, 0x80}),
+		make_case ("0x8F", Token {Token::Type::PRINT, 0x8F}, KeyInput {KeyInput::Key::CHAR, 0x8F}),
+		make_case ("0x9B", Token {Token::Type::PRINT, 0x9B}, KeyInput {KeyInput::Key::CHAR, 0x9B}),
+		make_case ("0xA0", Token {Token::Type::PRINT, 0xA0}, KeyInput {KeyInput::Key::CHAR, 0xA0}),
+		make_case ("0xFF", Token {Token::Type::PRINT, 0xFF}, KeyInput {KeyInput::Key::CHAR, 0xFF}),
+		// DEL - ignore
+		make_case ("DEL",  Token {Token::Type::PRINT, 0x7F}),
+		// Non-plain - ignore
+		make_case ("a param",   Token {Token::Type::PRINT, 'a', {1}}),
+		make_case ("a private", Token {Token::Type::PRINT, 'a', {}, '?'}),
+		make_case ("a inter",   Token {Token::Type::PRINT, 'a', {}, 0, {' '}})
 	)).run_rc());
 	BT_SUCCESS;
 }
 
 BT_SCENARIO_TEST (test_decode_exec) {
 	BT_ASSERT_RC (Suite ("EXEC", cases <decode> (
-		make_case ("TAB",       Token {Token::Type::EXEC, '\t'},   KeyInput {KeyInput::Key::TAB}),
-		make_case ("CR",        Token {Token::Type::EXEC, '\r'},   KeyInput {KeyInput::Key::ENTER}),
-		make_case ("LF",        Token {Token::Type::EXEC, '\n'},   KeyInput {KeyInput::Key::ENTER}),
-		make_case ("ESCAPE",    Token {Token::Type::EXEC, '\e'},   KeyInput {KeyInput::Key::ESCAPE}),
-		make_case ("BACKSPACE", Token {Token::Type::EXEC, '\x7f'}, KeyInput {KeyInput::Key::BACKSPACE})
+		// ASCII
+		make_case ("TAB",        Token {Token::Type::EXEC, '\t'},   KeyInput {KeyInput::Key::TAB}),
+		make_case ("CR",         Token {Token::Type::EXEC, '\r'},   KeyInput {KeyInput::Key::ENTER}),
+		make_case ("LF",         Token {Token::Type::EXEC, '\n'},   KeyInput {KeyInput::Key::ENTER}),
+		make_case ("ESCAPE",     Token {Token::Type::EXEC, '\e'},   KeyInput {KeyInput::Key::ESCAPE}),
+		make_case ("BACKSPACE",  Token {Token::Type::EXEC, '\x7f'}, KeyInput {KeyInput::Key::BACKSPACE}),
+		// High - ignore
+		make_case ("0x1C",       Token {Token::Type::EXEC, 0x1C}),
+		make_case ("0x80",       Token {Token::Type::EXEC, 0x80}),
+		make_case ("0x9B",       Token {Token::Type::EXEC, 0x9B}),
+		// Non-plain - ignore
+		make_case ("CR param",   Token {Token::Type::EXEC, '\r', {1}}),
+		make_case ("CR private", Token {Token::Type::EXEC, '\r', {}, '?'}),
+		make_case ("CR inter",   Token {Token::Type::EXEC, '\r', {}, 0, {' '}})
 	)).run_rc());
 	BT_SUCCESS;
 }
 
 BT_SCENARIO_TEST (test_decode_esc) {
 	BT_ASSERT_RC (Suite ("ESC", cases <decode> (
-		make_case ("ESCAPE", Token {Token::Type::ESC}, KeyInput {KeyInput::Key::ESCAPE}),
-		make_case ("alt A",  Token {Token::Type::ESC, 'A'},  KeyInput {.key = KeyInput::Key::CHAR, .byte = 'A', .alt = true}),
-		make_case ("alt a",  Token {Token::Type::ESC, 'a'},  KeyInput {.key = KeyInput::Key::CHAR, .byte = 'a', .alt = true}),
-		make_case ("alt 1",  Token {Token::Type::ESC, '1'},  KeyInput {.key = KeyInput::Key::CHAR, .byte = '1', .alt = true})
+		// ESC & alt mod
+		make_case ("ESCAPE",   Token {Token::Type::ESC},        KeyInput {KeyInput::Key::ESCAPE}),
+		make_case ("alt A",    Token {Token::Type::ESC, 'A'},   KeyInput {.key = KeyInput::Key::CHAR, .byte = 'A',  .alt = true}),
+		make_case ("alt a",    Token {Token::Type::ESC, 'a'},   KeyInput {.key = KeyInput::Key::CHAR, .byte = 'a',  .alt = true}),
+		make_case ("alt 1",    Token {Token::Type::ESC, '1'},   KeyInput {.key = KeyInput::Key::CHAR, .byte = '1',  .alt = true}),
+		make_case ("alt [",    Token {Token::Type::ESC, '['},   KeyInput {.key = KeyInput::Key::CHAR, .byte = '[',  .alt = true}),
+		make_case ("alt O",    Token {Token::Type::ESC, 'O'},   KeyInput {.key = KeyInput::Key::CHAR, .byte = 'O',  .alt = true}),
+		make_case ("alt /",    Token {Token::Type::ESC, '/'},   KeyInput {.key = KeyInput::Key::CHAR, .byte = '/',  .alt = true}),
+		make_case ("alt SP",   Token {Token::Type::ESC, ' '},   KeyInput {.key = KeyInput::Key::CHAR, .byte = ' ',  .alt = true}),
+		make_case ("alt 0x8F", Token {Token::Type::ESC, 0x8F},  KeyInput {.key = KeyInput::Key::CHAR, .byte = 0x8F, .alt = true}),
+		make_case ("alt 0x9B", Token {Token::Type::ESC, 0x9B},  KeyInput {.key = KeyInput::Key::CHAR, .byte = 0x9B, .alt = true}),
+		// DEL, C0 - ignore
+		make_case ("DEL",      Token {Token::Type::ESC, 0x7F}),
+		make_case ("0x1F",     Token {Token::Type::ESC, 0x1F}),
+		// Non-plain - ignore
+		make_case ("alt A param",   Token {Token::Type::ESC, 'A', {1}}),
+		make_case ("alt A private", Token {Token::Type::ESC, 'A', {}, '?'}),
+		make_case ("alt A inter",   Token {Token::Type::ESC, 'A', {}, 0, {' '}})
 	)).run_rc());
 	BT_SUCCESS;
 }
@@ -104,7 +142,12 @@ BT_SCENARIO_TEST (test_decode_ss3) {
 		make_case ("F1", Token {Token::Type::SS3, 'P'}, KeyInput {KeyInput::Key::F1}),
 		make_case ("F2", Token {Token::Type::SS3, 'Q'}, KeyInput {KeyInput::Key::F2}),
 		make_case ("F3", Token {Token::Type::SS3, 'R'}, KeyInput {KeyInput::Key::F3}),
-		make_case ("F4", Token {Token::Type::SS3, 'S'}, KeyInput {KeyInput::Key::F4})
+		make_case ("F4", Token {Token::Type::SS3, 'S'}, KeyInput {KeyInput::Key::F4}),
+		make_case ("Z",  Token {Token::Type::SS3, 'Z'}),
+		// Non-plain - ignore
+		make_case ("F1 param",   Token {Token::Type::SS3, 'P', {1}}),
+		make_case ("F1 private", Token {Token::Type::SS3, 'P', {}, '?'}),
+		make_case ("F1 inter",   Token {Token::Type::SS3, 'P', {}, 0, {' '}})
 	)).run_rc());
 	BT_SUCCESS;
 }
