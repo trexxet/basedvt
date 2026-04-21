@@ -28,7 +28,7 @@ constexpr auto make_case (std::string_view name, Token input) {
 }
 
 BT_SCENARIO_TEST (test_decode_char) {
-	BT_ASSERT_RC (Suite ("CHAR", cases <decode> (
+	BT_ASSERT_RC (Suite ("CHAR", cases <decode_key> (
 		// ASCII
 		make_case ("a",  Token {Token::Type::PRINT, 'a'}, KeyInput {KeyInput::Key::CHAR, 'a'}),
 		make_case ("A",  Token {Token::Type::PRINT, 'A'}, KeyInput {KeyInput::Key::CHAR, 'A'}),
@@ -54,7 +54,7 @@ BT_SCENARIO_TEST (test_decode_char) {
 }
 
 BT_SCENARIO_TEST (test_decode_exec) {
-	BT_ASSERT_RC (Suite ("EXEC", cases <decode> (
+	BT_ASSERT_RC (Suite ("EXEC", cases <decode_key> (
 		// ASCII
 		make_case ("TAB",        Token {Token::Type::EXEC, '\t'},   KeyInput {KeyInput::Key::TAB}),
 		make_case ("CR",         Token {Token::Type::EXEC, '\r'},   KeyInput {KeyInput::Key::ENTER}),
@@ -74,7 +74,7 @@ BT_SCENARIO_TEST (test_decode_exec) {
 }
 
 BT_SCENARIO_TEST (test_decode_esc) {
-	BT_ASSERT_RC (Suite ("ESC", cases <decode> (
+	BT_ASSERT_RC (Suite ("ESC", cases <decode_key> (
 		// ESC & alt mod
 		make_case ("ESCAPE",   Token {Token::Type::ESC},        KeyInput {KeyInput::Key::ESCAPE}),
 		make_case ("alt A",    Token {Token::Type::ESC, 'A'},   KeyInput {.key = KeyInput::Key::CHAR, .byte = 'A',  .alt = true}),
@@ -98,7 +98,7 @@ BT_SCENARIO_TEST (test_decode_esc) {
 }
 
 BT_SCENARIO_TEST (test_decode_csi_simple) {
-	BT_ASSERT_RC (Suite ("CSI simple", cases <decode> (
+	BT_ASSERT_RC (Suite ("CSI simple", cases <decode_key> (
 		make_case ("UP",    Token {Token::Type::CSI, 'A'}, KeyInput {KeyInput::Key::UP}),
 		make_case ("DOWN",  Token {Token::Type::CSI, 'B'}, KeyInput {KeyInput::Key::DOWN}),
 		make_case ("RIGHT", Token {Token::Type::CSI, 'C'}, KeyInput {KeyInput::Key::RIGHT}),
@@ -114,7 +114,7 @@ BT_SCENARIO_TEST (test_decode_csi_simple) {
 }
 
 BT_SCENARIO_TEST (test_decode_csi_tilde) {
-	BT_ASSERT_RC (Suite ("CSI tilde", cases <decode> (
+	BT_ASSERT_RC (Suite ("CSI tilde", cases <decode_key> (
 		make_case ("HOME",      Token {Token::Type::CSI, '~', {1}},  KeyInput {KeyInput::Key::HOME}),
 		make_case ("INSERT",    Token {Token::Type::CSI, '~', {2}},  KeyInput {KeyInput::Key::INSERT}),
 		make_case ("DELETE",    Token {Token::Type::CSI, '~', {3}},  KeyInput {KeyInput::Key::DELETE}),
@@ -138,7 +138,7 @@ BT_SCENARIO_TEST (test_decode_csi_tilde) {
 }
 
 BT_SCENARIO_TEST (test_decode_ss3) {
-	BT_ASSERT_RC (Suite ("SS3", cases <decode> (
+	BT_ASSERT_RC (Suite ("SS3", cases <decode_key> (
 		make_case ("F1", Token {Token::Type::SS3, 'P'}, KeyInput {KeyInput::Key::F1}),
 		make_case ("F2", Token {Token::Type::SS3, 'Q'}, KeyInput {KeyInput::Key::F2}),
 		make_case ("F3", Token {Token::Type::SS3, 'R'}, KeyInput {KeyInput::Key::F3}),
@@ -191,7 +191,7 @@ BT_SCENARIO_TEST (test_decode_mods) {
 }
 
 BT_SCENARIO_TEST (test_decode_csi_mods) {
-	BT_ASSERT_RC (Suite ("CSI mods", cases <decode> (
+	BT_ASSERT_RC (Suite ("CSI mods", cases <decode_key> (
 		make_case ("shift UP",             Token {Token::Type::CSI, 'A', {1, 2}},  KeyInput {.key = KeyInput::Key::UP,        .shift = true}),
 		make_case ("alt UP",               Token {Token::Type::CSI, 'A', {1, 3}},  KeyInput {.key = KeyInput::Key::UP,        .alt = true}),
 		make_case ("ctrl DOWN",            Token {Token::Type::CSI, 'B', {1, 5}},  KeyInput {.key = KeyInput::Key::DOWN,      .ctrl = true}),
@@ -208,7 +208,7 @@ BT_SCENARIO_TEST (test_decode_csi_mods) {
 }
 
 BT_SCENARIO_TEST (test_decode_csi_wrong) {
-	BT_ASSERT_RC (Suite ("CSI wrong", cases <decode> (
+	BT_ASSERT_RC (Suite ("CSI wrong", cases <decode_key> (
 		make_case ("CSI 2 B",      Token {Token::Type::CSI, 'B', {2}}),
 		make_case ("CSI 2;5 B",    Token {Token::Type::CSI, 'B', {2, 5}}),
 		make_case ("CSI 1;99 B",   Token {Token::Type::CSI, 'B', {1, 99}}),

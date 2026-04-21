@@ -15,7 +15,7 @@ target_compile_definitions(basedvt
 )
 
 set(basedvt_SOURCES
-	Decode.cpp
+	DecoderKey.cpp
 	FSMActions.cpp
 	FSMCallbacks.cpp
 	FSMClassifier.cpp

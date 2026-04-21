@@ -175,7 +175,7 @@ inline static void print_decoded (const Token& t, const OptKeyInput& decoded) {
 #endif
 };
 
-OptKeyInput decode (const Token& t) {
+OptKeyInput decode_key (const Token& t) {
 	OptKeyInput decoded = decoder[Token::PrettyType::idx(t.type)] (t);
 	print_decoded (t, decoded);
 	return decoded;

@@ -6,6 +6,6 @@
 
 namespace BasedVT {
 
-InputEvent::OptKeyInput decode (const Token& t);
+InputEvent::OptKeyInput decode_key (const Token& t);
 
 }

@@ -19,18 +19,18 @@ public:
 	void feed (uint8_t c) { tokenizer.feed (c); }
 
 	InputEvent::OptKeyInput get () noexcept {
-		return tokenizer.get().and_then (decode);
+		return tokenizer.get().and_then (decode_key);
 	}
 
 	InputEvent::OptKeyInput flush () noexcept {
-		return tokenizer.flush().and_then (decode);
+		return tokenizer.flush().and_then (decode_key);
 	}
 
 	std::vector<InputEvent::KeyInput> parse_string (std::string_view str) {
 		std::vector<InputEvent::KeyInput> keys;
 		std::vector<Token> tokens = tokenizer.feed_string (str);
 		for (const Token& token : tokens) {
-			if (InputEvent::OptKeyInput key = decode (token))
+			if (InputEvent::OptKeyInput key = decode_key (token))
 				keys.emplace_back (std::move (*key));
 		}
 		return keys;
