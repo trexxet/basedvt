@@ -53,6 +53,12 @@ OptKeyInput decode_exec (const Token& t) {
 					.byte = static_cast<uint8_t> ('a' + (t.byte - 1)),
 					.ctrl = true
 				};
+			if (t.byte >= 0x1C && t.byte <= 0x1F)
+				return KeyInput {
+					.key = KeyInput::Key::CHAR,
+					.byte = static_cast<uint8_t> ('\\' + (t.byte - 0x1C)),
+					.ctrl = true
+				};
 	}
 	return std::nullopt;
 }
