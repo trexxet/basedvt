@@ -8,6 +8,8 @@
 
 namespace BasedVT {
 
+using namespace InputEvent;
+
 bool apply_mods (KeyInput& k, uint8_t mods) {
 	mods -= 1;
 	if (mods >= 16) [[unlikely]] return false;

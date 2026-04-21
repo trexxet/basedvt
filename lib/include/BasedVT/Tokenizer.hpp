@@ -15,7 +15,7 @@ class Tokenizer {
 public:
 	using Mode = FSMDetail::Mode;
 
-	void feed (uint8_t c);
+	void feed (uint8_t c) noexcept;
 	std::vector<Token> feed_string (std::string_view str);
 
 	OptToken get () noexcept { return ctx.take_ready(); }

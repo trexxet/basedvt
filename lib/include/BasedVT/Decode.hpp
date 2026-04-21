@@ -1,10 +1,11 @@
 #pragma once
 
-#include "BasedVT/Key.hpp"
+#include "BasedVT/InputEvent/Event.hpp"
+#include "BasedVT/InputEvent/Key.hpp"
 #include "BasedVT/Token.hpp"
 
 namespace BasedVT {
 
-OptKeyInput decode (const Token& t);
+InputEvent::OptKeyInput decode (const Token& t);
 
 }

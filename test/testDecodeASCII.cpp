@@ -5,6 +5,7 @@
 
 using namespace Basedtest;
 using namespace BasedVT;
+using namespace BasedVT::InputEvent;
 
 namespace BasedVT {
 #ifdef BASEDVT_ENABLE_TO_STRING

@@ -5,9 +5,11 @@
 #include <optional>
 #include <vector>
 
-#include "Decode.hpp"
-#include "Key.hpp"
-#include "Tokenizer.hpp"
+#include "BasedVT/Decode.hpp"
+#include "BasedVT/Tokenizer.hpp"
+
+#include "BasedVT/InputEvent/Event.hpp"
+#include "BasedVT/InputEvent/Key.hpp"
 
 namespace BasedVT {
 
@@ -16,19 +18,19 @@ class Parser {
 public:
 	void feed (uint8_t c) { tokenizer.feed (c); }
 
-	OptKeyInput get () noexcept {
+	InputEvent::OptKeyInput get () noexcept {
 		return tokenizer.get().and_then (decode);
 	}
 
-	OptKeyInput flush () noexcept {
+	InputEvent::OptKeyInput flush () noexcept {
 		return tokenizer.flush().and_then (decode);
 	}
 
-	std::vector<KeyInput> parse_string (std::string_view str) {
-		std::vector<KeyInput> keys;
+	std::vector<InputEvent::KeyInput> parse_string (std::string_view str) {
+		std::vector<InputEvent::KeyInput> keys;
 		std::vector<Token> tokens = tokenizer.feed_string (str);
 		for (const Token& token : tokens) {
-			if (OptKeyInput key = decode (token))
+			if (InputEvent::OptKeyInput key = decode (token))
 				keys.emplace_back (std::move (*key));
 		}
 		return keys;

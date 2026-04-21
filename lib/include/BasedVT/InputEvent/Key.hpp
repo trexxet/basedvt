@@ -12,7 +12,7 @@
 #include <string_view>
 #endif
 
-namespace BasedVT {
+namespace BasedVT::InputEvent {
 
 struct KeyInput {
 	enum class Key {

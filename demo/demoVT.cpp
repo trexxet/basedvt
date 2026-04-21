@@ -52,9 +52,9 @@ ssize_t read_input (std::span<uint8_t> buf) {
 	return n;
 }
 
-void print_decoded_key (const BasedVT::KeyInput& key) {
-	std::string str = std::format ("Done: {}", BasedVT::KeyInput::PrettyKey::to_string (key.key));
-	if (key.key == BasedVT::KeyInput::Key::CHAR)
+void print_decoded_key (const BasedVT::InputEvent::KeyInput& key) {
+	std::string str = std::format ("Done: {}", BasedVT::InputEvent::KeyInput::PrettyKey::to_string (key.key));
+	if (key.key == BasedVT::InputEvent::KeyInput::Key::CHAR)
 		str.append (std::isspace (key.byte) ? " whitespace" : std::format(" {}", static_cast<char> (key.byte)));
 	if (key.ctrl) str.append (" ctrl");
 	if (key.alt) str.append (" alt");
