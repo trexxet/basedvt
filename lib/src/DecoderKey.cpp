@@ -40,6 +40,7 @@ OptKeyInput decode_print (const Token& t) {
 OptKeyInput decode_exec (const Token& t) {
 	if (!maybe_plain_key_input (t)) [[unlikely]] return std::nullopt;
 	switch (t.byte) {
+		case 0x00: return KeyInput { .key = KeyInput::Key::CHAR, .byte = ' ', .ctrl = true };
 		case 0x09: return KeyInput { .key = KeyInput::Key::TAB };
 		case 0x0A:
 		case 0x0D: return KeyInput { .key = KeyInput::Key::ENTER };

@@ -56,6 +56,7 @@ BT_SCENARIO_TEST (test_decode_char) {
 BT_SCENARIO_TEST (test_decode_exec) {
 	BT_ASSERT_RC (Suite ("EXEC", cases <decode_key> (
 		// ASCII
+		make_case ("NUL",        Token {Token::Type::EXEC, '\0'},   KeyInput {.key = KeyInput::Key::CHAR, .byte = ' ', .ctrl = true}),
 		make_case ("TAB",        Token {Token::Type::EXEC, '\t'},   KeyInput {KeyInput::Key::TAB}),
 		make_case ("CR",         Token {Token::Type::EXEC, '\r'},   KeyInput {KeyInput::Key::ENTER}),
 		make_case ("LF",         Token {Token::Type::EXEC, '\n'},   KeyInput {KeyInput::Key::ENTER}),

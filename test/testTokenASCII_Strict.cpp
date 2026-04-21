@@ -31,6 +31,7 @@ BT_SCENARIO_TEST (test_token_print) {
 
 BT_SCENARIO_TEST (test_token_exec) {
 	BT_ASSERT_RC (Suite ("EXEC", cases <tokenize> (
+		make_case ("NUL", std::string_view("\0", 1), Token {Token::Type::EXEC, '\0'}),
 		make_case ("CR",  "\r",   Token {Token::Type::EXEC, '\r'}),
 		make_case ("LF",  "\n",   Token {Token::Type::EXEC, '\n'}),
 		make_case ("TAB", "\t",   Token {Token::Type::EXEC, '\t'}),
