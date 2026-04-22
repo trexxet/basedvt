@@ -24,6 +24,7 @@ struct KeyInput {
 		ESCAPE,
 		PAGE_UP,
 		PAGE_DOWN,
+		BEGIN,
 		END,
 		HOME,
 		LEFT,

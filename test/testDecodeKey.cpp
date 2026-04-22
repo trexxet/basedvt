@@ -108,6 +108,7 @@ BT_SCENARIO_TEST (test_decode_csi_simple) {
 		make_case ("DOWN",  Token {Token::Type::CSI, 'B'}, KeyInput {KeyInput::Key::DOWN}),
 		make_case ("RIGHT", Token {Token::Type::CSI, 'C'}, KeyInput {KeyInput::Key::RIGHT}),
 		make_case ("LEFT",  Token {Token::Type::CSI, 'D'}, KeyInput {KeyInput::Key::LEFT}),
+		make_case ("BEGIN", Token {Token::Type::CSI, 'E'}, KeyInput {KeyInput::Key::BEGIN}),
 		make_case ("END",   Token {Token::Type::CSI, 'F'}, KeyInput {KeyInput::Key::END}),
 		make_case ("HOME",  Token {Token::Type::CSI, 'H'}, KeyInput {KeyInput::Key::HOME}),
 		make_case ("F1",    Token {Token::Type::CSI, 'P'}, KeyInput {KeyInput::Key::F1}),

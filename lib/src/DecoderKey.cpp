@@ -136,6 +136,7 @@ OptKeyInput decode_csi (const Token& t) {
 		case 'B': ok = decode_csi_simple (k, t, KeyInput::Key::DOWN);  break;
 		case 'C': ok = decode_csi_simple (k, t, KeyInput::Key::RIGHT); break;
 		case 'D': ok = decode_csi_simple (k, t, KeyInput::Key::LEFT);  break;
+		case 'E': ok = decode_csi_simple (k, t, KeyInput::Key::BEGIN); break;
 		case 'F': ok = decode_csi_simple (k, t, KeyInput::Key::END);   break;
 		case 'H': ok = decode_csi_simple (k, t, KeyInput::Key::HOME);  break;
 		case 'P': ok = decode_csi_simple (k, t, KeyInput::Key::F1);    break;
