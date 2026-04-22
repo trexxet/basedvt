@@ -18,22 +18,22 @@ class Parser {
 public:
 	void feed (uint8_t c) { tokenizer.feed (c); }
 
-	InputEvent::OptKeyInput get () noexcept {
-		return tokenizer.get().and_then (decode_key);
+	InputEvent::OptEvent get () noexcept {
+		return tokenizer.get().and_then (decode);
 	}
 
-	InputEvent::OptKeyInput flush () noexcept {
-		return tokenizer.flush().and_then (decode_key);
+	InputEvent::OptEvent flush () noexcept {
+		return tokenizer.flush().and_then (decode);
 	}
 
-	std::vector<InputEvent::KeyInput> parse_string (std::string_view str) {
-		std::vector<InputEvent::KeyInput> keys;
+	std::vector<InputEvent::Event> parse_string (std::string_view str) {
+		std::vector<InputEvent::Event> inputs;
 		std::vector<Token> tokens = tokenizer.feed_string (str);
 		for (const Token& token : tokens) {
-			if (InputEvent::OptKeyInput key = decode_key (token))
-				keys.emplace_back (std::move (*key));
+			if (InputEvent::OptEvent event = decode (token))
+				inputs.emplace_back (std::move (*event));
 		}
-		return keys;
+		return inputs;
 	}
 
 	void switch_mode (Tokenizer::Mode mode) noexcept { tokenizer.switch_mode (mode); }

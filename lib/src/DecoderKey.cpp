@@ -172,7 +172,7 @@ constexpr std::array decoder = {
 
 inline static void print_decoded (const Token& t, const OptKeyInput& decoded) {
 #ifdef BASEDVT_ENABLE_LOG
-	std::print ("Decode {}: {}\n",
+	std::print ("Decode key {}: {}\n",
 		Token::PrettyType::to_string(t.type),
 	#ifdef BASEDVT_ENABLE_TO_STRING
 		decoded ? decoded->to_string() : "none"

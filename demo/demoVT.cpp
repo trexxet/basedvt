@@ -6,8 +6,10 @@
 #include <print>
 #include <span>
 #include <string>
+#include <variant>
 
 #include "Basedlib/Core/FSM.hpp"
+#include "Basedlib/Meta/Overloaded.hpp"
 #include "Basedlib/Meta/PrettyEnum.hpp"
 
 // TODO: linux
@@ -38,6 +40,8 @@ bool conf_term (ConfTerm& ct) {
 void unconf_term (ConfTerm& ct) {
 	SetConsoleMode (ct.hIn, ct.modeSave);
 }
+#else
+
 #endif
 
 ssize_t read_input (std::span<uint8_t> buf) {
@@ -77,11 +81,12 @@ void decode (BasedVT::Parser& parser, std::span<uint8_t> buf, Mode mode) {
 
 	for (uint8_t b : buf) {
 		parser.feed (b);
-		auto key = needs_flush (buf, b, mode) ? parser.flush() : parser.get();
-		if (key) {
-			print_decoded_key (*key);
-			decodedAny = true;
-		}
+		auto event = needs_flush (buf, b, mode) ? parser.flush() : parser.get();
+		if (!event) continue;
+		std::visit (Basedlib::Overloaded {
+			[] (BasedVT::InputEvent::KeyInput k) { print_decoded_key (k); }
+		}, *event);
+		decodedAny = true;
 	}
 
 	if (!decodedAny)
