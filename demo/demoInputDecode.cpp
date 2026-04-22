@@ -9,7 +9,7 @@
 #include "Basedlib/Meta/PrettyEnum.hpp"
 
 void print_decoded_key (const BasedVT::InputEvent::KeyInput& key) {
-	std::string str = std::format ("Done: {}", BasedVT::InputEvent::KeyInput::PrettyKey::to_string (key.key));
+	std::string str = std::format ("Decoded: {}", BasedVT::InputEvent::KeyInput::PrettyKey::to_string (key.key));
 	if (key.key == BasedVT::InputEvent::KeyInput::Key::CHAR)
 		str.append (std::isspace (key.byte) ? " whitespace" : std::format(" {}", static_cast<char> (key.byte)));
 	if (key.ctrl) str.append (" ctrl");
