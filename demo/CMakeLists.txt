@@ -3,4 +3,4 @@ function(add_basedvt_demo demoName)
 	target_link_libraries(${demoName} basedvt)
 endfunction()
 
-add_basedvt_demo(bvt_demo_vt demoVT.cpp)
+add_basedvt_demo(bvt_demo_input_decode demoInputDecode.cpp)
