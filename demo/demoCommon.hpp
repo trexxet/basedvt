@@ -5,8 +5,6 @@
 #include <print>
 #include <span>
 
-// TODO: linux
-
 #ifdef __WIN32
 #include <windows.h>
 #include <io.h>
@@ -17,12 +15,22 @@
 struct ConfTerm {
 	HANDLE hIn;
 	DWORD modeSave;
+
+	bool ok = false;
+	ConfTerm();
+	~ConfTerm();
 };
-
-bool conf_term (ConfTerm& ct);
-void unconf_term (ConfTerm& ct);
 #else
+#include <unistd.h>
+#include <termios.h>
 
+struct ConfTerm {
+	termios save;
+
+	bool saved = false, ok = false;
+	ConfTerm();
+	~ConfTerm();
+};
 #endif
 
 ssize_t read_input (std::span<uint8_t> buf);

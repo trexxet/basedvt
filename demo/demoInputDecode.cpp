@@ -42,10 +42,9 @@ void decode (BasedVT::Parser& parser, std::span<uint8_t> buf) {
 }
 
 int main () {
-#ifdef __WIN32
 	ConfTerm ct;
-	if (!conf_term (ct)) return 1;
-#endif
+	if (!ct.ok) return 1;
+
 	std::print ("BasedVT Input Decode Demo\n");
 
 	uint8_t buf[64];
@@ -54,8 +53,5 @@ int main () {
 	BasedVT::Parser parser;
 	decode (parser, std::span (buf, n));
 
-#ifdef __WIN32
-	unconf_term (ct);
-#endif
 	return 0;
 }

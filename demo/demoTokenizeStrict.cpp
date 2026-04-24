@@ -25,10 +25,9 @@ void tokenize (BasedVT::Tokenizer& tokenizer, std::span<uint8_t> buf) {
 }
 
 int main (int argc, char* argv[]) {
-#ifdef __WIN32
 	ConfTerm ct;
-	if (!conf_term (ct)) return 1;
-#endif
+	if (!ct.ok) return 1;
+
 	std::print ("BasedVT Tokenizer Strict mode demo\n");
 
 	uint8_t buf[64];
@@ -48,8 +47,5 @@ int main (int argc, char* argv[]) {
 	BasedVT::Tokenizer tokenizer (BasedVT::Tokenizer::Mode::STRICT);
 	tokenize (tokenizer, std::span (buf, n));
 
-#ifdef __WIN32
-	unconf_term (ct);
-#endif
 	return 0;
 }

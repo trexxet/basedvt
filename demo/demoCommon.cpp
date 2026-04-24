@@ -1,23 +1,51 @@
 #include "demoCommon.hpp"
 
 #ifdef __WIN32
-bool conf_term (ConfTerm& ct) {
-	ct.hIn = GetStdHandle (STD_INPUT_HANDLE);
-	GetConsoleMode (ct.hIn, &ct.modeSave);
-	DWORD mode = ct.modeSave | ENABLE_VIRTUAL_TERMINAL_INPUT;
+ConfTerm::ConfTerm () {
+	hIn = GetStdHandle (STD_INPUT_HANDLE);
+	GetConsoleMode (hIn, &modeSave);
+	DWORD mode = modeSave | ENABLE_VIRTUAL_TERMINAL_INPUT;
 	mode &= ~(ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT | ENABLE_PROCESSED_INPUT);
-	if (!SetConsoleMode (ct.hIn, mode)) {
+	if (!SetConsoleMode (hIn, mode)) {
 		std::print ("SetConsoleMode failed\n");
-		return false;
+		return;
 	}
-	return true;
+	ok = true;
 }
 
-void unconf_term (ConfTerm& ct) {
-	SetConsoleMode (ct.hIn, ct.modeSave);
+ConfTerm::~ConfTerm () {
+	SetConsoleMode (hIn, modeSave);
 }
 #else
+ConfTerm::ConfTerm () {
+	if (!isatty (STDIN_FILENO)) {
+		std::print (stderr, "stdin is not a tty\n");
+		return;
+	}
+	if (tcgetattr (STDIN_FILENO, &save) != 0) {
+		std::perror ("tcgetattr");
+		return;
+	}
 
+	saved = true;
+	termios cfg = save;
+	cfg.c_lflag &= ~(ICANON | ISIG | ECHO);
+	cfg.c_iflag &= ~(IXON);
+	cfg.c_cc[VMIN] = 1;
+	cfg.c_cc[VTIME] = 0;
+
+	if (tcsetattr (STDIN_FILENO, TCSAFLUSH, &cfg) != 0) {
+		std::perror ("tcsetattr");
+		return;
+	}
+	ok = true;
+}
+
+ConfTerm::~ConfTerm () {
+	if (!saved) return;
+	if (tcsetattr (STDIN_FILENO, TCSANOW, &save) != 0)
+		std::perror ("tcsetattr");
+}
 #endif
 
 ssize_t read_input (std::span<uint8_t> buf) {
